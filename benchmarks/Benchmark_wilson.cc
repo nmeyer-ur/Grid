@@ -91,7 +91,11 @@ int main (int argc, char ** argv)
   LatticeFermion    ref(&Grid);    ref=zero;
   LatticeFermion    tmp(&Grid);    tmp=zero;
   LatticeFermion    err(&Grid);    tmp=zero;
-  LatticeGaugeField Umu(&Grid); random(pRNG,Umu);
+  LatticeGaugeField Umu(&Grid); 
+
+  //random(pRNG,Umu);
+  SU3::ColdConfiguration(Umu);
+  
   std::vector<LatticeColourMatrix> U(4,&Grid);
 
   double volume=1;

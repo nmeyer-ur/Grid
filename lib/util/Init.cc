@@ -253,7 +253,7 @@ void Grid_init(int *argc,char ***argv)
     GridCmdOptionInt(arg,MB);
     uint64_t MB64 = MB;
     //GlobalSharedMemory::MAX_MPI_SHM_BYTES = MB64*1024LL*1024LL;
-    GlobalSharedMemory::MAX_MPI_SHM_BYTES = 1LL*1024LL*1024LL;
+    GlobalSharedMemory::MAX_MPI_SHM_BYTES = 1LL;
   }
 
   if( GridCmdOptionExists(*argv,*argv+*argc,"--shm-hugepages") ){
@@ -292,6 +292,7 @@ void Grid_init(int *argc,char ***argv)
   ////////////////////////////////////
   // Banner
   ////////////////////////////////////
+  /*
   if ( CartesianCommunicator::RankWorld() == 0 ) {
     std::cout <<std::endl;
     std::cout  << "__|__|__|__|__|__|__|__|__|__|__|__|__|__|__"<<std::endl;
@@ -323,7 +324,7 @@ void Grid_init(int *argc,char ***argv)
     std::cout << "GNU General Public License for more details."<<std::endl;
     std::cout << std::endl;
   }
-
+  */
 
   ////////////////////////////////////
   // Logging
