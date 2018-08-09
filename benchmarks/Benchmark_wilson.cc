@@ -70,6 +70,9 @@ int main (int argc, char ** argv)
   GridCartesian               Grid(latt_size,simd_layout,mpi_layout);
   GridRedBlackCartesian     RBGrid(&Grid);
 
+  Grid.show_decomposition();
+
+
   int threads = GridThread::GetThreads();
 
   GridLogLayout();

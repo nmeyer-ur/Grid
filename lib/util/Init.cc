@@ -52,10 +52,7 @@ Author: paboyle <paboyle@ph.ed.ac.uk>
 
 #if defined(__ARM_FEATURE_SVE)
 #include <arm_sve.h>
-#if defined(SVE_QEMU)
-#pragma message("Compiling for qemu")
 #include <sys/prctl.h>
-#endif
 #endif
 
 #include <fenv.h>
@@ -218,26 +215,22 @@ void Grid_init(int *argc,char ***argv)
 {
   #if defined(__ARM_FEATURE_SVE)
 
-  #if defined(SVE_QEMU)
   #define PR_SVE_SET_VL 50
-  std::cout << "Compiled for qemu. Want VL " << GEN_SIMD_WIDTH << ".\n";
+  long want = GEN_SIMD_WIDTH;
+  long sve_width = svcntb();
+  std::cout << "want VL " << want << ", got " << sve_width << ". ";
 
-  long want, got;
-  want = GEN_SIMD_WIDTH;
-  got = prctl(PR_SVE_SET_VL, want);
-  std::cout << "Test prctl(PR_SVE_SET_VL, want). Want " << GEN_SIMD_WIDTH << ". Got " << got << '\n';
-  if (want != got) {
-    std::cout << "test failed!\n";
+  if (want != sve_width) {
+    long got = prctl(PR_SVE_SET_VL, want);
+    if (want != got) {
+       std::cout << "prctl() failed. got " << got << ".\n";
+    } else {
+       std::cout << "prctl() ok. got " << got << ".\n";
+    }
+  } else {
+    std::cout << "ok.\n";
   }
-  #endif
 
-  int sve_width = svcntb();
-//  uint64_t sve_width = Optimization::sve_vector_width();
-  if (sve_width != GEN_SIMD_WIDTH) {
-    std::cout << "Grid was compiled for " << GEN_SIMD_WIDTH << " byte vector width." << '\n';
-    std::cout << "This architecture has " << sve_width << " byte vector width." << '\n';
-    exit(EXIT_FAILURE);
-  }
   #endif
 
   GridLogger::GlobalStopWatch.Start();
@@ -334,7 +327,6 @@ void Grid_init(int *argc,char ***argv)
   std::string defaultLog("Error,Warning,Message,Performance");
   GridCmdOptionCSL(defaultLog,logstreams);
   GridLogConfigure(logstreams);
-
 
   if( GridCmdOptionExists(*argv,*argv+*argc,"--log") ){
     arg = GridCmdOptionPayload(*argv,*argv+*argc,"--log");
