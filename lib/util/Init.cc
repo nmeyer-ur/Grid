@@ -213,23 +213,49 @@ static MemoryStats dbgMemStats;
 
 void Grid_init(int *argc,char ***argv)
 {
+  long want = GEN_SIMD_WIDTH;
+
+  std::cout << "Grid with SVE support." << "\n";
+  std::cout << "N. Meyer et al., University of Regensburg, Germany. 2019." << "\n";
+
+  #if defined(GENSVE) && defined(SVE_CPLX_LD1)
+    std::cout << "Build SVE_CPLX_LD1: " << want*8 << "-bit SVE, ld1/st1 complex arithmetics." << "\n";
+  #elif defined(GENSVE) && defined(SVE_CPLX_REF)
+    std::cout << "Build SVE_CPLX_REF: " << want*8 << "-bit SVE, pointers complex arithmetics." << "\n";
+  #elif defined(GENSVE) && defined(SVE_REAL_LD1)
+    std::cout << "Build SVE_REAL_LD1: " << want*8 << "-bit SVE, ld1/st1 real arithmetics." << "\n";
+  #elif defined(GENSVE) && defined(SVE_REAL_REF)
+    std::cout << "Build SVE_REAL_REF: " << want*8 << "-bit SVE, pointers real arithmetics." << "\n";
+  #elif defined(GENSVE) && defined(SVE_REAL_LD2)
+    std::cout << "Build SVE_REAL_LD2: " << want*8 << "-bit SVE, ld2/st2 real arithmetics." << "\n";
+  #elif defined(GENSVE) && defined(__ARM_FEATURE_SVE)
+    std::cout << "Build SVE av: " << want*8 << "-bit SVE, auto-vectorization." << "\n";
+  #elif defined(NEONV8)
+    std::cout << "Build NEONv8: " << want*8 << "-bit NEON, intrinsics." << "\n";
+  #elif defined(GENSVE)
+    std::cout << "Build NEON av: " << want*8 << "-bit NEON, auto-vectorization." << "\n";
+  #else
+    std::cout << "Build unknown target: " << want*8 << "-bit, original Grid generic." << "\n";
+  #endif
+
+
   #if defined(__ARM_FEATURE_SVE)
 
-  #define PR_SVE_SET_VL 50
-  long want = GEN_SIMD_WIDTH;
-  long sve_width = svcntb();
-  std::cout << "want VL " << want << ", got " << sve_width << ". ";
+    #define PR_SVE_SET_VL 50
+    long sve_width = svcntb();
+    std::cout << "Want vector length " << want*8 << " bits, got " << sve_width*8 << " bits. ";
 
-  if (want != sve_width) {
-    long got = prctl(PR_SVE_SET_VL, want);
-    if (want != got) {
-       std::cout << "prctl() failed. got " << got << ".\n";
+    if (want != sve_width) {
+      long got = prctl(PR_SVE_SET_VL, want);
+      if (want != got) {
+         std::cout << "prctl() failed. got " << got*8 << ".\n";
+      } else {
+         std::cout << "prctl() ok. got " << got*8 << ". Exiting.\n";
+         exit(EXIT_FAILURE);
+      }
     } else {
-       std::cout << "prctl() ok. got " << got << ".\n";
+      std::cout << "ok.\n";
     }
-  } else {
-    std::cout << "ok.\n";
-  }
 
   #endif
 
@@ -390,7 +416,7 @@ void Grid_init(int *argc,char ***argv)
     QCD::WilsonKernelsStatic::Opt=QCD::WilsonKernelsStatic::OptGeneric;
     QCD::StaggeredKernelsStatic::Opt=QCD::StaggeredKernelsStatic::OptGeneric;
   }
-  if( GridCmdOptionExists(*argv,*argv+*argc,"--comms-overlap") ){
+ if( GridCmdOptionExists(*argv,*argv+*argc,"--comms-overlap") ){
     QCD::WilsonKernelsStatic::Comms = QCD::WilsonKernelsStatic::CommsAndCompute;
   } else {
     QCD::WilsonKernelsStatic::Comms = QCD::WilsonKernelsStatic::CommsThenCompute;

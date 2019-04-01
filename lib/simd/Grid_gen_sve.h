@@ -48,130 +48,166 @@ namespace Optimization {
   #if defined(GENSVE)
   #include "sve/sve_acle.h"
 
-  #if defined(SVE_FULL)
-  #ifndef SVE_GROUP_V
-  #define SVE_GROUP_V
-  #endif
-  #ifndef SVE_GROUP_ARITH
-  #define SVE_GROUP_ARITH
-  #endif
-  #ifndef SVE_GROUP_PREC
-  #define SVE_GROUP_PREC
-  #endif
-  #ifndef SVE_GROUP_PERM
-  #define SVE_GROUP_PERM
-  #endif
-  #ifndef SVE_GROUP_PREFETCH
-  #define SVE_GROUP_PREFETCH
-  #endif
-  #elif defined(SVE_FULL_SLS)
-  #ifndef SVE_GROUP_V
-  #define SVE_GROUP_V
-  #endif
-  #ifndef SVE_GROUP_ARITH_SLS
-  #define SVE_GROUP_ARITH_SLS
-  #endif
-  #ifndef SVE_GROUP_PREC
-  #define SVE_GROUP_PREC
-  #endif
-  #ifndef SVE_GROUP_PERM
-  #define SVE_GROUP_PERM
-  #endif
-  #ifndef SVE_GROUP_PREFETCH
-  #define SVE_GROUP_PREFETCH
-  #endif
-  #elif defined(SVE_FULL_REF)
-  #ifndef SVE_GROUP_V
-  #define SVE_GROUP_V
-  #endif
-  #ifndef SVE_GROUP_ARITH_REF
-  #define SVE_GROUP_ARITH_REF
-  #endif
-  #ifndef SVE_GROUP_PREC
-  #define SVE_GROUP_PREC
-  #endif
-  #ifndef SVE_GROUP_PERM
-  #define SVE_GROUP_PERM
-  #endif
-  #ifndef SVE_GROUP_PREFETCH
-  #define SVE_GROUP_PREFETCH
-  #endif
-  #endif
+    #if defined(SVE_CPLX_LD1)
+      #define SVE_GROUP_V
+      #define SVE_GROUP_ARITH_CPLX_LD1
+      #define SVE_GROUP_PREC
+      #define SVE_GROUP_PERM
+      #define SVE_GROUP_PREFETCH
 
-  #if defined(SVE_GROUP_V)
-  #pragma message("enabling SVE_GROUP_V")
-  #define SVE_VSPLAT
-  #define SVE_VSTORE
-  #define SVE_VSTREAM
-  #define SVE_VSET
-  #endif
+    #elif defined(SVE_CPLX_REF)
+      #define SVE_GROUP_V_REF
+      #define SVE_GROUP_ARITH_CPLX_REF
+      #define SVE_GROUP_PREC
+      #define SVE_GROUP_PERM
+      #define SVE_GROUP_PREFETCH
 
-  #if defined(SVE_GROUP_ARITH)
-  #pragma message("enabling SVE_GROUP_ARITH")
-  #define SVE_SUM
-  #define SVE_SUB
-  #define SVE_MULT
-  #define SVE_MULTREALPART
-  #define SVE_MADDREALPART
-  #define SVE_MULTCOMPLEX
-  #define SVE_DIV
-  #define SVE_CONJ
-  #define SVE_TIMESMINUSI
-  #define SVE_TIMESI
+    #elif defined(SVE_REAL_LD1)
+      #define SVE_GROUP_V
+      #define SVE_GROUP_ARITH_REAL_LD1
+      #define SVE_GROUP_PREC
+      #define SVE_GROUP_PERM
+      #define SVE_GROUP_PREFETCH
+
+    #elif defined(SVE_REAL_REF)
+      #define SVE_GROUP_V_REF
+      #define SVE_GROUP_ARITH_REAL_REF
+      #define SVE_GROUP_PREC
+      // aliasing issues
+      //#define SVE_GROUP_PERM_REF
+      #define SVE_GROUP_PERM
+      #define SVE_GROUP_PREFETCH
+
+    #elif defined(SVE_REAL_LD2)
+      #define SVE_GROUP_V
+      #define SVE_GROUP_ARITH_REAL_LD2
+      #define SVE_GROUP_PREC
+      #define SVE_GROUP_PERM
+      #define SVE_GROUP_PREFETCH
+
+    #endif
+
+    #if defined(SVE_GROUP_V)
+      #pragma message("enabling SVE_GROUP_V")
+      #define SVE_VSPLAT
+      #define SVE_VSTORE
+      #define SVE_VSTREAM
+      #define SVE_VSET
+    #endif
+
+    #if defined(SVE_GROUP_V_REF)
+      #pragma message("enabling SVE_GROUP_V_REF")
+      #define SVE_VSPLAT_REF
+      #define SVE_VSTORE_REF
+      #define SVE_VSTREAM_REF
+      #define SVE_VSET_REF
+    #endif
+
+    #if defined(SVE_GROUP_ARITH_CPLX_LD1)
+      #pragma message("enabling SVE_GROUP_ARITH_CPLX_LD1")
+      #define SVE_SUM
+      #define SVE_SUB
+      #define SVE_MULT
+      #define SVE_MULTREALPART_CPLX_LD1
+      #define SVE_MADDREALPART_CPLX_LD1
+      #define SVE_MULTCOMPLEX_CPLX_LD1
+      #define SVE_DIV
+      #define SVE_CONJ
+      #define SVE_TIMESMINUSI
+      #define SVE_TIMESI
 //  #define SVE_REDUCE
-  #define SVE_REDUCE_SLS
-  #elif defined(SVE_GROUP_ARITH_SLS)
-  #pragma message("enabling SVE_GROUP_ARITH_SLS")
-  #define SVE_SUM
-  #define SVE_SUB
-  #define SVE_MULT
-  #define SVE_MULTREALPART_SLS
-  #define SVE_MADDREALPART_SLS
-  #define SVE_MULTCOMPLEX_SLS
-  #define SVE_DIV
-  #define SVE_CONJ_SLS
-  #define SVE_TIMESMINUSI_SLS
-  #define SVE_TIMESI_SLS
-  #define SVE_REDUCE_SLS
-  #elif defined(SVE_GROUP_ARITH_REF)
-  #pragma message("enabling SVE_GROUP_ARITH_REF")
-  #define SVE_SUM_REF
-  #define SVE_SUB_REF
-  #define SVE_MULT_REF
-  #define SVE_MULTREALPART_REF
-  #define SVE_MADDREALPART_REF
-  #define SVE_MULTCOMPLEX_REF
-  #define SVE_MULTCOMPLEX
-  #define SVE_DIV_REF
-  #define SVE_CONJ_REF
-  #define SVE_TIMESMINUSI_REF
-  #define SVE_TIMESI_REF
-  #define SVE_REDUCE_REF
-  #endif
+      #define SVE_REDUCE_REAL_LD2
 
-  #if defined(SVE_GROUP_PREC)
-  #pragma message("enabling SVE_GROUP_PREC")
-  #define SVE_PREC
-  #endif
+    #elif defined(SVE_GROUP_ARITH_CPLX_REF)
+      #pragma message("enabling SVE_GROUP_ARITH_CPLX_REF")
+      #define SVE_SUM_REF
+      #define SVE_SUB_REF
+      #define SVE_MULT_REF
+      #define SVE_MULTREALPART_CPLX_REF
+      #define SVE_MADDREALPART_CPLX_REF
+      #define SVE_MULTCOMPLEX_CPLX_REF
+      #define SVE_DIV_REF
+      #define SVE_CONJ_REF
+      #define SVE_TIMESMINUSI_REF
+      #define SVE_TIMESI_REF
+      #define SVE_REDUCE_REF
 
-  #if defined(SVE_GROUP_PERM)
-  #pragma message("enabling SVE_GROUP_PERM")
-  #define SVE_ROTATE
-  #define SVE_PERMUTE
-  #define SVE_EXCHANGE
-  #endif
+    #elif defined(SVE_GROUP_ARITH_REAL_LD1)
+      #pragma message("enabling SVE_GROUP_ARITH_REAL_LD1")
+      #define SVE_SUM
+      #define SVE_SUB
+      #define SVE_MULT
+      #define SVE_MULTREALPART_REAL_LD1
+      #define SVE_MADDREALPART_REAL_LD1
+      #define SVE_MULTCOMPLEX_REAL_LD1
+      #define SVE_DIV
+      #define SVE_CONJ
+      #define SVE_TIMESMINUSI
+      #define SVE_TIMESI
+  //  #define SVE_REDUCE
+      #define SVE_REDUCE_REAL_LD2
 
-  #if defined(SVE_GROUP_PREFETCH)
-  #pragma message("enabling SVE_GROUP_PREFETCH")
-  #define SVE_PREFETCH
-  #endif
+    #elif defined(SVE_GROUP_ARITH_REAL_LD2)
+      #pragma message("enabling SVE_GROUP_ARITH_REAL_LD2")
+      #define SVE_SUM
+      #define SVE_SUB
+      #define SVE_MULT
+      #define SVE_MULTREALPART_REAL_LD2
+      #define SVE_MADDREALPART_REAL_LD2
+      #define SVE_MULTCOMPLEX_REAL_LD2
+      #define SVE_DIV
+      #define SVE_CONJ_REAL_LD2
+      #define SVE_TIMESMINUSI_REAL_LD2
+      #define SVE_TIMESI_REAL_LD2
+      #define SVE_REDUCE_REAL_LD2
+
+    #elif defined(SVE_GROUP_ARITH_REAL_REF)
+      #pragma message("enabling SVE_GROUP_ARITH_REAL_REF")
+      #define SVE_SUM_REF
+      #define SVE_SUB_REF
+      #define SVE_MULT_REF
+      #define SVE_MULTREALPART_REAL_REF
+      #define SVE_MADDREALPART_REAL_REF
+      #define SVE_MULTCOMPLEX_REAL_REF
+      #define SVE_DIV_REF
+      #define SVE_CONJ_REF
+      #define SVE_TIMESMINUSI_REF
+      #define SVE_TIMESI_REF
+      #define SVE_REDUCE_REF
+
+    #endif
+
+    #if defined(SVE_GROUP_PREC)
+      #pragma message("enabling SVE_GROUP_PREC")
+      #define SVE_PREC
+    #endif
+
+    #if defined(SVE_GROUP_PERM)
+      #pragma message("enabling SVE_GROUP_PERM")
+      #define SVE_ROTATE
+      #define SVE_PERMUTE
+      #define SVE_EXCHANGE
+
+    #elif defined(SVE_GROUP_PERM_REF)
+      #pragma message("enabling SVE_GROUP_PERM_REF")
+      #define SVE_ROTATE_REF
+      #define SVE_PERMUTE_REF
+      #define SVE_EXCHANGE_REF
+    #endif
+
+    #if defined(SVE_GROUP_PREFETCH)
+      #pragma message("enabling SVE_GROUP_PREFETCH")
+      #define SVE_PREFETCH
+    #endif
 
   #endif // GENSVE
 
   #if defined(GENSVE) && defined(SVE_VSPLAT)
   #include "sve/sve_vsplat.h"
+  #elif defined(GENSVE) && defined(SVE_VSPLAT_REF)
+  #include "sve/sve_vsplat_ref.h"
   #else
-
+  #pragma message("generic Vsplat")
   struct Vsplat{
     // Complex
     template <typename T>
@@ -194,7 +230,8 @@ namespace Optimization {
 
       VECTOR_FOR(i, W<T>::r, 1)
       {
-        out.v[i] = a;
+        out.v[i] = a;  #if defined(GENSVE) && defined(SVE_VSTORE)
+  #include "sve/sve_vstore.h"
       }
 
       return out;
@@ -205,8 +242,10 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_VSTORE)
   #include "sve/sve_vstore.h"
+  #elif defined(GENSVE) && defined(SVE_VSTORE_REF)
+  #include "sve/sve_vstore_ref.h"
   #else
-
+  #pragma message("generic Vstore")
   struct Vstore{
     // Real
     template <typename T>
@@ -219,8 +258,10 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_VSTREAM)
   #include "sve/sve_vstream.h"
+  #elif defined(GENSVE) && defined(SVE_VSTREAM_REF)
+  #include "sve/sve_vstream_ref.h"
   #else
-
+  #pragma message("generic Vstream")
   struct Vstream{
     // Real
     template <typename T>
@@ -233,8 +274,10 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_VSET)
   #include "sve/sve_vset.h"
+  #elif defined(GENSVE) && defined(SVE_VSET_REF)
+  #include "sve/sve_vset_ref.h"
   #else
-
+  #pragma message("generic Vset")
   struct Vset{
     // Complex
     template <typename T>
@@ -272,7 +315,7 @@ namespace Optimization {
   #elif defined(GENSVE) && defined(SVE_SUM)
   #include "sve/sve_sum.h"
   #else
-
+  #pragma message("generic Sum")
   struct Sum{
     // Complex/Real
     template <typename T>
@@ -295,7 +338,7 @@ namespace Optimization {
   #elif defined(GENSVE) && defined(SVE_SUB)
   #include "sve/sve_sub.h"
   #else
-
+  #pragma message("generic Sub")
   struct Sub{
     // Complex/Real
     template <typename T>
@@ -318,7 +361,7 @@ namespace Optimization {
   #elif defined(GENSVE) && defined(SVE_MULT)
   #include "sve/sve_mult.h"
   #else
-
+  #pragma message("generic Mult")
   struct Mult{
     // Real
     template <typename T>
@@ -336,14 +379,18 @@ namespace Optimization {
 
   #endif
 
-  #if defined(GENSVE) && defined(SVE_MULTREALPART_REF)
+  #if defined(GENSVE) && defined(SVE_MULTREALPART_CPLX_REF)
   #include "sve/sve_multrealpart_ref.h"
-  #elif defined(GENSVE) && defined(SVE_MULTREALPART_SLS)
-  #include "sve/sve_multrealpart_sls.h"
-  #elif defined(GENSVE) && defined(SVE_MULTREALPART)
+  #elif defined(GENSVE) && defined(SVE_MULTREALPART_CPLX_LD1)
   #include "sve/sve_multrealpart.h"
+  #elif defined(GENSVE) && defined(SVE_MULTREALPART_REAL_LD1)
+  #include "sve/sve_multrealpart_real.h"
+  #elif defined(GENSVE) && defined(SVE_MULTREALPART_REAL_LD2)
+  #include "sve/sve_multrealpart_sls.h"
+  #elif defined(GENSVE) && defined(SVE_MULTREALPART_REAL_REF)
+  #include "sve/sve_multrealpart_real_ref.h"
   #else
-
+  #pragma message("generic MultRealPart")
   struct MultRealPart{
     template <typename T>
     inline vec<T> operator()(const vec<T> &a, const vec<T> &b){
@@ -362,12 +409,16 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_MADDREALPART_REF)
   #include "sve/sve_maddrealpart_ref.h"
-  #elif defined(GENSVE) && defined(SVE_MADDREALPART_SLS)
+  #elif defined(GENSVE) && defined(SVE_MADDREALPART_REAL_REF)
+  #include "sve/sve_maddrealpart_real_ref.h"
+  #elif defined(GENSVE) && defined(SVE_MADDREALPART_REAL_LD1)
+  #include "sve/sve_maddrealpart_real.h"
+  #elif defined(GENSVE) && defined(SVE_MADDREALPART_REAL_LD2)
   #include "sve/sve_maddrealpart_sls.h"
-  #elif defined(GENSVE) && defined(SVE_MADDREALPART)
+  #elif defined(GENSVE) && defined(SVE_MADDREALPART_CPLX_LD1)
   #include "sve/sve_maddrealpart.h"
   #else
-
+  #pragma message("generic MaddRealPart")
   struct MaddRealPart{
     template <typename T>
     inline vec<T> operator()(const vec<T> &a, const vec<T> &b, const vec<T> &c){
@@ -384,14 +435,19 @@ namespace Optimization {
 
   #endif
 
-  #if defined(GENSVE) && defined(SVE_MULTCOMPLEX_REF)
-  #include "sve/sve_multcomplex_ref.h"
-  #elif defined(GENSVE) && defined(SVE_MULTCOMPLEX_SLS)
-  #include "sve/sve_multcomplex_sls.h"
-  #elif defined(GENSVE) && defined(SVE_MULTCOMPLEX)
+  #if defined(GENSVE) && defined(SVE_MULTCOMPLEX_CPLX_LD1)
   #include "sve/sve_multcomplex.h"
+  #elif defined(GENSVE) && defined(SVE_MULTCOMPLEX_CPLX_REF)
+  #include "sve/sve_multcomplex_ref.h"
+  #elif defined(GENSVE) && defined(SVE_MULTCOMPLEX_REAL_LD2)
+  #include "sve/sve_multcomplex_sls.h"
+  #elif defined(GENSVE) && defined(SVE_MULTCOMPLEX_REAL_LD1)
+  #include "sve/sve_multcomplex_real.h"
+  #elif defined(GENSVE) && defined(SVE_MULTCOMPLEX_REAL_REF)
+  #include "sve/sve_multcomplex_real_ref.h"
   #else
 
+  #pragma message("generic MultComplex")
   #define cmul(a, b, c, i)\
   c[i]   = a[i]*b[i]   - a[i+1]*b[i+1];\
   c[i+1] = a[i]*b[i+1] + a[i+1]*b[i];
@@ -426,7 +482,7 @@ namespace Optimization {
   #elif defined(GENSVE) && defined(SVE_DIV)
   #include "sve/sve_div.h"
   #else
-
+  #pragma message("generic Div")
   struct Div{
     // Real
     template <typename T>
@@ -446,12 +502,12 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_CONJ_REF)
   #include "sve/sve_conj_ref.h"
-  #elif defined(GENSVE) && defined(SVE_CONJ_SLS)
+  #elif defined(GENSVE) && defined(SVE_CONJ_REAL_LD2)
   #include "sve/sve_conj_sls.h"
   #elif defined(GENSVE) && defined(SVE_CONJ)
   #include "sve/sve_conj.h"
   #else
-
+  #pragma message("generic Conj")
   #define conj(a, b, i)\
   b[i]   = a[i];\
   b[i+1] = -a[i+1];
@@ -477,12 +533,12 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_TIMESMINUSI_REF)
   #include "sve/sve_timesminusi_ref.h"
-  #elif defined(GENSVE) && defined(SVE_TIMESMINUSI_SLS)
+  #elif defined(GENSVE) && defined(SVE_TIMESMINUSI_REAL_LD2)
   #include "sve/sve_timesminusi_sls.h"
   #elif defined(GENSVE) && defined(SVE_TIMESMINUSI)
   #include "sve/sve_timesminusi.h"
   #else
-
+  #pragma message("generic TimesMi")
   #define timesmi(a, b, i)\
   b[i]   = a[i+1];\
   b[i+1] = -a[i];
@@ -508,12 +564,12 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_TIMESI_REF)
   #include "sve/sve_timesi_ref.h"
-  #elif defined(GENSVE) && defined(SVE_TIMESI_SLS)
+  #elif defined(GENSVE) && defined(SVE_TIMESI_REAL_LD2)
   #include "sve/sve_timesi_sls.h"
   #elif defined(GENSVE) && defined(SVE_TIMESI)
   #include "sve/sve_timesi.h"
   #else
-
+  #pragma message("generic Timesi")
   #define timesi(a, b, i)\
   b[i]   = -a[i+1];\
   b[i+1] = a[i];
@@ -540,7 +596,7 @@ namespace Optimization {
   #if defined(GENSVE) && defined(SVE_PREC)
   #include "sve/sve_prec.h"
   #else
-
+  #pragma message("generic PrecisionChange")
   struct PrecisionChange {
     static inline vech StoH (const vecf &a, const vecf &b) {
       vech ret;
@@ -606,8 +662,10 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_EXCHANGE)
   #include "sve/sve_exchange.h"
+  #elif defined(GENSVE) && defined(SVE_EXCHANGE_REF)
+  #include "sve/sve_exchange_ref.h"
   #else
-
+  #pragma message("generic Exchange")
   struct Exchange{
 
     template <typename T,int n>
@@ -647,8 +705,10 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_PERMUTE)
   #include "sve/sve_permute.h"
+  #elif defined(GENSVE) && defined(SVE_PERMUTE_REF)
+  #include "sve/sve_permute_ref.h"
   #else
-
+  #pragma message("generic Permute")
   //////////////////////////////////////////////
   // Some Template specialization
   #define perm(a, b, n, w)\
@@ -680,8 +740,10 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_ROTATE)
   #include "sve/sve_rotate.h"
+  #elif defined(GENSVE) && defined(SVE_ROTATE_REF)
+  #include "sve/sve_rotate_ref.h"
   #else
-
+  #pragma message("generic Rotate")
   #define rot(a, b, n, w)\
   VECTOR_FOR(i, w, 1)\
   {\
@@ -710,10 +772,12 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_REDUCE)
   #include "sve/sve_reduce.h"
-  #elif defined(GENSVE) && defined(SVE_REDUCE_SLS)
+  #elif defined(GENSVE) && defined(SVE_REDUCE_REF)
+  #include "sve/sve_reduce_ref.h"
+  #elif defined(GENSVE) && defined(SVE_REDUCE_REAL_LD2)
   #include "sve/sve_reduce_sls.h"
   #else
-
+  #pragma message("generic Reduce")
   #define acc(v, a, off, step, n)\
   for (unsigned int i = off; i < n; i += step)\
   {\

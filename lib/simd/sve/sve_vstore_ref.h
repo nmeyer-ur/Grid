@@ -1,0 +1,20 @@
+#ifndef SVE_VSTORE_H
+#define SVE_VSTORE_H
+
+#pragma message("include sve_vstore_ref.h")
+
+  struct Vstore{
+    // Real
+    template <typename T>
+    inline void operator()(const vec<T> &a, T *D){
+
+      svbool_t pg1 = acle<T>::pg1();
+      typename acle<T>::vt *a_v = (typename acle<T>::vt*)&a.v;
+    // NOTE illegal '&' here causes SIGBUS at runtime, related to  CAS-35230-H2H6T1
+      // svst1(pg1, (typename acle<T>::pt*)&D, a_v);
+      svst1(pg1, D, *a_v);
+    }
+  };
+
+
+#endif
