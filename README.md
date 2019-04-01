@@ -5,8 +5,8 @@
 This library provides data parallel C++ container classes with
 internal memory layout that is transformed to map efficiently to
 SIMD architectures. This branch enables support for ARM SVE
-architectures such as the Fujitsu A64FX CPU, which features an 512-bit
-vector registers. The implementation of Grid uses SVE ACLE intrinsics.
+architectures such as the Fujitsu A64FX CPU, which features 512-bit
+wide vector units. The SVE implementation of Grid uses SVE ACLE intrinsics.
 
 ### References
 
@@ -100,7 +100,7 @@ implementation:
 ```
 armie -msve-vector-bits=512 -- ./tests/Test_simd
 ```
-The binaries check for the SVE vector length at startup and exits
+The binaries check for the SVE vector length at startup and exit
 with `EXIT_FAILURE` upon mismatch.
 
 Match
