@@ -11,9 +11,9 @@ wide vector units. The SVE implementation of Grid uses SVE ACLE intrinsics.
 ### References
 
 * _SVE-enabling Lattice QCD Codes_, IEEE Cluster Conference 2018 (https://arxiv.org/abs/1901.07294)
-* _Lattice QCD on Upcoming ARM Architectures_, Lattice Conference 2018 (Poster)
+* _Lattice QCD on upcoming ARM Architectures_, Lattice Conference 2018 (Poster)
 (https://indico.fnal.gov/event/15949/session/4/contribution/225/material/poster/0.pdf)
-* _Lattice QCD on Upcoming ARM Architectures_, Lattice Conference 2018 (Paper) tbd
+* _Lattice QCD on upcoming ARM Architectures_, Lattice Conference 2018 (Paper) tbd
 
 ### SVE compiler support
 
@@ -49,7 +49,6 @@ configure --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double
     --disable-openmp --enable-comms=none CXX=armclang++ \
     CXXFLAGS="-O3 -march=armv8-a+sve -fno-unroll-loops -mllvm \
     -vectorizer-min-trip-count=2 -DGENSVE -D<implementation>"
-    CXXFLAGS="-O3 -march=armv8-a+sve -fno-unroll-loops -mllvm
 make
 ```
 
