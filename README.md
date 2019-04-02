@@ -81,7 +81,7 @@ permutation group.
 
 ### How to run Grid tests and benchmarks
 
-The following runtime arguments are useful for running Grid binaries in
+The following command line arguments are useful running Grid binaries in
 simulation environments. The arguments avoid excessive runtimes and memory
 consumption.
 * `--shm N`, sets the size of communication buffers to N bytes,
