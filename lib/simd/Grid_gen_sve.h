@@ -230,8 +230,7 @@ namespace Optimization {
 
       VECTOR_FOR(i, W<T>::r, 1)
       {
-        out.v[i] = a;  #if defined(GENSVE) && defined(SVE_VSTORE)
-  #include "sve/sve_vstore.h"
+        out.v[i] = a;
       }
 
       return out;
