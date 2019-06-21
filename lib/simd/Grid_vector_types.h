@@ -155,6 +155,24 @@ class Grid_simd {
     return sizeof(Vector_type) / sizeof(Scalar_type);
   }
 
+// TODO  armclang 19.1 hotfix  
+// CAS-123094-R2H8Z5
+// should be removed later
+#ifdef FIXSTACKCOPY
+    Grid_simd &operator=(const Grid_simd &&rhs) {
+        svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
+        svst1(svptrue_b8(), (int8_t*)this, tmp);
+        //v = rhs.v;
+        return *this;
+      };
+
+    Grid_simd &operator=(const Grid_simd &rhs) {
+        svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
+        svst1(svptrue_b8(), (int8_t*)this, tmp);
+        //v = rhs.v;
+        return *this;
+      };
+#else
   Grid_simd &operator=(const Grid_simd &&rhs) {
     v = rhs.v;
     return *this;
@@ -162,7 +180,10 @@ class Grid_simd {
   Grid_simd &operator=(const Grid_simd &rhs) {
     v = rhs.v;
     return *this;
-  };  // faster than not declaring it and leaving to the compiler
+  }; 
+#endif 
+
+  // faster than not declaring it and leaving to the compiler
   Grid_simd() = default;
   Grid_simd(const Grid_simd &rhs) : v(rhs.v){};  // compiles in movaps
   Grid_simd(const Grid_simd &&rhs) : v(rhs.v){};
