@@ -244,19 +244,19 @@ void Grid_init(int *argc,char ***argv)
     #define PR_SVE_SET_VL 50
     long sve_width = svcntb();
     std::cout << "Want vector length " << want*8 << " bits, got " << sve_width*8 << " bits. ";
-
+/*
     if (want != sve_width) {
       long got = prctl(PR_SVE_SET_VL, want);
       if (want != got) {
          std::cout << "prctl() failed. got " << got*8 << ".\n";
       } else {
          std::cout << "prctl() ok. got " << got*8 << ". Exiting.\n";
-         exit(EXIT_FAILURE);
+         //exit(EXIT_FAILURE);
       }
     } else {
       std::cout << "ok.\n";
     }
-
+*/
   #endif
 
   GridLogger::GlobalStopWatch.Start();
