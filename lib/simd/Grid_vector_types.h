@@ -155,28 +155,33 @@ class Grid_simd {
     return sizeof(Vector_type) / sizeof(Scalar_type);
   }
 
-// TODO  armclang 19.1 hotfix  
+// TODO  armclang 19.1 hotfix
 // CAS-123094-R2H8Z5
 // should be removed later
-#ifdef __clang__
-//#ifndef CLANGHOTFIXSTACKOPY 
-//#pragma message("Hotfix for CAS-123094-R2H8Z5")
-//#define CLANGHOTFIXSTACKOPY 
-//#endif
-    Grid_simd &operator=(const Grid_simd &&rhs) {
-        svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
-        svst1(svptrue_b8(), (int8_t*)this, tmp);
-        //v = rhs.v;
-        return *this;
-      };
 
-    Grid_simd &operator=(const Grid_simd &rhs) {
-        svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
-        svst1(svptrue_b8(), (int8_t*)this, tmp);
-        //v = rhs.v;
-        return *this;
-      };
-#else
+#ifdef __clang__
+#ifdef GENSVE
+#ifdef defined(SVE_CPLX_LD1) || defined(SVE_REAL_LD1) || defined(SVE_REAL_LD2) || defined(SVE_REAL_REF) || defined(SVE_CPLX_REF)
+#define ARMCLANGHOTFIX
+#endif
+#endif
+#endif
+
+#ifdef ARMCLANGHOTFIX
+  Grid_simd &operator=(const Grid_simd &&rhs) {
+    svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
+    svst1(svptrue_b8(), (int8_t*)this, tmp);
+    //v = rhs.v;
+    return *this;
+  };
+
+  Grid_simd &operator=(const Grid_simd &rhs) {
+    svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
+    svst1(svptrue_b8(), (int8_t*)this, tmp);
+    //v = rhs.v;
+    return *this;
+  };
+#else // no hotfix
   Grid_simd &operator=(const Grid_simd &&rhs) {
     v = rhs.v;
     return *this;
@@ -184,8 +189,8 @@ class Grid_simd {
   Grid_simd &operator=(const Grid_simd &rhs) {
     v = rhs.v;
     return *this;
-  }; 
-#endif 
+  };
+#endif
 
   // faster than not declaring it and leaving to the compiler
   Grid_simd() = default;
