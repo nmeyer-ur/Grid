@@ -158,7 +158,11 @@ class Grid_simd {
 // TODO  armclang 19.1 hotfix  
 // CAS-123094-R2H8Z5
 // should be removed later
-#ifdef FIXSTACKCOPY
+#ifdef __clang__
+#ifndef CLANGHOTFIXSTACKOPY 
+#pragma message("Hotfix for CAS-123094-R2H8Z5")
+#define CLANGHOTFIXSTACKOPY 
+#endif
     Grid_simd &operator=(const Grid_simd &&rhs) {
         svint8_t tmp = svld1(svptrue_b8(), (int8_t*)&(rhs.v));
         svst1(svptrue_b8(), (int8_t*)this, tmp);
