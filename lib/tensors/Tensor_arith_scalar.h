@@ -45,7 +45,7 @@ r>::value, iScalar<l>>::type operator * (const iScalar<l>& lhs, const r& rhs)
   typename iScalar<l>::tensor_reduced srhs; srhs=t;
   return lhs*srhs;
 }
-template<class l, class r, class = std::enable_if_t<std::is_arithmetic<l>::value>> strong_inline typename
+template<class l, class r, class = std::enable_if<std::is_arithmetic<l>::value>::type> strong_inline typename
 std::enable_if<std::is_constructible<typename iScalar<r>::scalar_type,
 l>::value, iScalar<r>>::type operator * (const l& lhs, const iScalar<r>& rhs) {  return rhs*lhs; }
 
