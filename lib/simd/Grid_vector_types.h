@@ -159,10 +159,12 @@ class Grid_simd {
 // CAS-123094-R2H8Z5
 // should be removed later
 
+#if defined(__ARM_FEATURE_SVE)
 #ifdef __clang__
 #ifdef GENSVE
-#ifdef defined(SVE_CPLX_LD1) || defined(SVE_REAL_LD1) || defined(SVE_REAL_LD2) || defined(SVE_REAL_REF) || defined(SVE_CPLX_REF)
+#if defined(SVE_CPLX_LD1) || defined(SVE_REAL_LD1) || defined(SVE_REAL_LD2) || defined(SVE_REAL_REF) || defined(SVE_CPLX_REF)
 #define ARMCLANGHOTFIX
+#endif
 #endif
 #endif
 #endif
