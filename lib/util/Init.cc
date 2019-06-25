@@ -51,8 +51,10 @@ Author: paboyle <paboyle@ph.ed.ac.uk>
 #include <Grid/util/CompilerCompatible.h>
 
 #if defined(__ARM_FEATURE_SVE)
+#ifdef __clang__
 #include <arm_sve.h>
-#include <sys/prctl.h>
+//#include <sys/prctl.h>
+#endif
 #endif
 
 #include <fenv.h>

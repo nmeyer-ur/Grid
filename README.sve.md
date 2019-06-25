@@ -18,7 +18,8 @@ vector registers. The implementation of Grid uses SVE ACLE intrinsics.
 ### SVE compiler support
 
 * armclang 18.4 and 19.1
-* no gcc support at present
+* Allinea gcc 8.2.0 (auto-vectorization for fixed-size SVE, no intrinsics support yet)
+* gcc 8.2.0 (not tested, but expected to work too)
 
 ### SVE emulators and simulators
 
@@ -37,7 +38,7 @@ cd Grid
 git checkout feature/arm-sve
 ```
 
-### How to build
+### How to build using intrinsics (armclang only)
 
 Configuration for 512-bit SVE without MPI and without OpenMP
 support. To enable OpenMP supply `--enable-openmp` instead of
