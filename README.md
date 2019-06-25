@@ -5,20 +5,21 @@
 This library provides data parallel C++ container classes with
 internal memory layout that is transformed to map efficiently to
 SIMD architectures. This branch enables support for ARM SVE
-architectures such as the Fujitsu A64FX CPU, which features 512-bit
-wide vector units. The SVE implementation of Grid uses SVE ACLE intrinsics.
+architectures such as the Fujitsu A64FX CPU, which features an 512-bit
+vector registers. The implementation of Grid uses SVE ACLE intrinsics.
 
 ### References
 
 * _SVE-enabling Lattice QCD Codes_, IEEE Cluster Conference 2018 (https://arxiv.org/abs/1901.07294)
-* _Lattice QCD on upcoming ARM architectures_, Lattice Conference 2018 (Poster)
+* _Lattice QCD on Upcoming ARM Architectures_, Lattice Conference 2018 (Poster)
 (https://indico.fnal.gov/event/15949/session/4/contribution/225/material/poster/0.pdf)
-* _Lattice QCD on upcoming ARM architectures_, Lattice Conference 2018 (Paper) (https://arxiv.org/abs/1904.03927)
+* _Lattice QCD on Upcoming ARM Architectures_, Lattice Conference 2018 (Paper) tbd
 
 ### SVE compiler support
 
 * armclang 18.4 and 19.1
-* no gcc support at present
+* Allinea gcc 8.2.0 (auto-vectorization for fixed-size SVE, no intrinsics support yet)
+* gcc 8.2.0 (not tested, but expected to work too)
 
 ### SVE emulators and simulators
 
@@ -37,7 +38,7 @@ cd Grid
 git checkout feature/arm-sve
 ```
 
-### How to build
+### How to build using intrinsics (armclang only)
 
 Configuration for 512-bit SVE without MPI and without OpenMP
 support. To enable OpenMP supply `--enable-openmp` instead of
@@ -49,6 +50,7 @@ configure --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double
     --disable-openmp --enable-comms=none CXX=armclang++ \
     CXXFLAGS="-O3 -march=armv8-a+sve -fno-unroll-loops -mllvm \
     -vectorizer-min-trip-count=2 -DGENSVE -D<implementation>"
+    CXXFLAGS="-O3 -march=armv8-a+sve -fno-unroll-loops -mllvm
 make
 ```
 
@@ -81,7 +83,7 @@ permutation group.
 
 ### How to run Grid tests and benchmarks
 
-The following command line arguments are useful running Grid binaries in
+The following runtime arguments are useful for running Grid binaries in
 simulation environments. The arguments avoid excessive runtimes and memory
 consumption.
 * `--shm N`, sets the size of communication buffers to N bytes,
@@ -99,7 +101,7 @@ implementation:
 ```
 armie -msve-vector-bits=512 -- ./tests/Test_simd
 ```
-The binaries check for the SVE vector length at startup and exit
+The binaries check for the SVE vector length at startup and exits
 with `EXIT_FAILURE` upon mismatch.
 
 Match
