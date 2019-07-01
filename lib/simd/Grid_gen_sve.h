@@ -36,7 +36,9 @@ Author: Antonin Portelli <antonin.portelli@me.com>
 
 #if defined(GENSVE)
 #ifdef __ARM_FEATURE_SVE
+#ifdef __clang__
 #include <arm_sve.h>
+#endif
 #else
 #pragma error "Missing SVE feature"
 #endif /* __ARM_FEATURE_SVE */
@@ -45,7 +47,7 @@ Author: Antonin Portelli <antonin.portelli@me.com>
 namespace Grid {
 namespace Optimization {
 
-  #if defined(GENSVE)
+  #if defined(GENSVE) && defined(__clang__)
   #include "sve/sve_acle.h"
 
     #if defined(SVE_CPLX_LD1)
@@ -850,8 +852,10 @@ namespace Optimization {
 
   #endif
 
-  #if defined(GENSVE)
+  #if defined(GENSVE) && defined(__clang__)
   inline int sve_vector_width(){return svcntb();}
+  #else
+  inline int sve_vector_width(){return GEN_SIMD_WIDTH;}
   #endif
 }
 

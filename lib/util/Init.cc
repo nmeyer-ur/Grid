@@ -230,7 +230,7 @@ void Grid_init(int *argc,char ***argv)
     std::cout << "Build SVE_REAL_REF: " << want*8 << "-bit SVE, pointers real arithmetics." << "\n";
   #elif defined(GENSVE) && defined(SVE_REAL_LD2)
     std::cout << "Build SVE_REAL_LD2: " << want*8 << "-bit SVE, ld2/st2 real arithmetics." << "\n";
-  #elif defined(GENSVE) && defined(__ARM_FEATURE_SVE)
+  #elif defined(__ARM_FEATURE_SVE)
     std::cout << "Build SVE av: " << want*8 << "-bit SVE, auto-vectorization." << "\n";
   #elif defined(NEONV8)
     std::cout << "Build NEONv8: " << want*8 << "-bit NEON, intrinsics." << "\n";
@@ -244,7 +244,13 @@ void Grid_init(int *argc,char ***argv)
   #if defined(__ARM_FEATURE_SVE)
 
     #define PR_SVE_SET_VL 50
+
+    #ifdef __clang__
     long sve_width = svcntb();
+    #else                              // TODO FIXME for gcc auto-vectorization 
+    long sve_width = want;
+    #endif
+
     std::cout << "Want vector length " << want*8 << " bits, got " << sve_width*8 << " bits. ";
 /*
     if (want != sve_width) {
