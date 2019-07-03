@@ -1,6 +1,6 @@
     /*************************************************************************************
 
-    Grid physics library, www.github.com/paboyle/Grid 
+    Grid physics library, www.github.com/paboyle/Grid
 
     Source file: ./lib/Threads.h
 
@@ -66,31 +66,37 @@ class GridThread {
   static int _threads;
   static int _hyperthreads;
   static int _cores;
+  static int _iterations;
 
-  static void SetCores(int cr) { 
+  static void SetIterations(int it) {
+    _iterations = it;
+  }
+
+  static void SetCores(int cr) {
 #ifdef GRID_OMP
     _cores = cr;
-#else 
+#else
     _cores = 1;
 #endif
   }
-  static void SetThreads(int thr) { 
+  static void SetThreads(int thr) {
 #ifdef GRID_OMP
     _threads = MIN(thr,omp_get_max_threads()) ;
     omp_set_num_threads(_threads);
-#else 
+#else
     _threads = 1;
 #endif
   };
-  static void SetMaxThreads(void) { 
+  static void SetMaxThreads(void) {
 #ifdef GRID_OMP
     //    setenv("KMP_AFFINITY","balanced",1);
     _threads = omp_get_max_threads();
     omp_set_num_threads(_threads);
-#else 
+#else
     _threads = 1;
 #endif
   };
+  static int GetIterations(void) { return _iterations; };
   static int GetHyperThreads(void) { assert(_threads%_cores ==0); return _threads/_cores; };
   static int GetCores(void)   { return _cores; };
   static int GetThreads(void) { return _threads; };
@@ -102,12 +108,12 @@ class GridThread {
   static void GetWork(int nwork, int me, int & mywork, int & myoff,int units){
     int basework = nwork/units;
     int backfill = units-(nwork%units);
-    if ( me >= units ) { 
+    if ( me >= units ) {
       mywork = myoff = 0;
-    } else { 
+    } else {
       mywork = (nwork+me)/units;
       myoff  = basework * me;
-      if ( me > backfill ) 
+      if ( me > backfill )
 	myoff+= (me-backfill);
     }
     return;
@@ -126,7 +132,7 @@ class GridThread {
     return 0;
 #endif
   };
-  
+
   template<class obj> static void ThreadSum( std::vector<obj> &sum_array,obj &val,int me){
     sum_array[me] = val;
     val=zero;
@@ -137,7 +143,7 @@ class GridThread {
 
   static void bcopy(const void *src, void *dst, size_t len) {
 #ifdef GRID_OMP
-#pragma omp parallel 
+#pragma omp parallel
     {
       const char *c_src =(char *) src;
       char *c_dest=(char *) dst;
@@ -145,7 +151,7 @@ class GridThread {
       GridThread::GetWorkBarrier(len,me, mywork,myoff);
       bcopy(&c_src[myoff],&c_dest[myoff],mywork);
     }
-#else 
+#else
     bcopy(src,dst,len);
 #endif
   }

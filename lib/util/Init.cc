@@ -90,6 +90,7 @@ static std::vector<int> Grid_default_mpi;
 int GridThread::_threads =1;
 int GridThread::_hyperthreads=1;
 int GridThread::_cores=1;
+int GridThread::_iterations = -1;
 
 const std::vector<int> &GridDefaultLatt(void)     {return Grid_default_latt;};
 const std::vector<int> &GridDefaultMpi(void)      {return Grid_default_mpi;};
@@ -200,6 +201,18 @@ void GridParseLayout(char **argv,int argc,
     GridCmdOptionInt(arg,cores);
     GridThread::SetCores(cores);
   }
+  if( GridCmdOptionExists(argv,argv+argc,"--iterations") ){
+    int iterations;
+    int i;
+    arg= GridCmdOptionPayload(argv,argv+argc,"--iterations");
+    GridCmdOptionInt(arg,i);
+    if (i > 0)
+        iterations = i;
+    else
+        iterations = -1;
+    GridThread::SetIterations(iterations);
+  }
+
 }
 
 std::string GridCmdVectorIntToString(const std::vector<int> & vec){
@@ -247,7 +260,7 @@ void Grid_init(int *argc,char ***argv)
 
     #ifdef __clang__
     long sve_width = svcntb();
-    #else                              // TODO FIXME for gcc auto-vectorization 
+    #else                              // TODO FIXME for gcc auto-vectorization
     long sve_width = want;
     #endif
 
@@ -391,6 +404,7 @@ void Grid_init(int *argc,char ***argv)
     std::cout<<GridLogMessage<<"  --debug-stdout  : print stdout from EVERY node"<<std::endl;
     std::cout<<GridLogMessage<<"  --debug-mem     : print Grid allocator activity"<<std::endl;
     std::cout<<GridLogMessage<<"  --notimestamp   : suppress millisecond resolution stamps"<<std::endl;
+    std::cout<<GridLogMessage<<"  --iterations n  : set outer loop trip count (for benchmarking purposes only)"<<std::endl;    
     std::cout<<GridLogMessage<<std::endl;
     std::cout<<GridLogMessage<<"Performance:"<<std::endl;
     std::cout<<GridLogMessage<<std::endl;

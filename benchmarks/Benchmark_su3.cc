@@ -1,6 +1,6 @@
     /*************************************************************************************
 
-    Grid physics library, www.github.com/paboyle/Grid 
+    Grid physics library, www.github.com/paboyle/Grid
 
     Source file: ./benchmarks/Benchmark_su3.cc
 
@@ -37,7 +37,12 @@ int main (int argc, char ** argv)
   Grid_init(&argc,&argv);
 #define LMAX (20)
 #define LMIN (2)
+
+  int iterations = GridThread::GetIterations();
   int64_t Nloop=20;
+
+  if (iterations != -1)
+    Nloop = iterations;
 
   std::vector<int> simd_layout = GridDefaultSimd(Nd,vComplex::Nsimd());
   std::vector<int> mpi_layout  = GridDefaultMpi();
@@ -68,7 +73,7 @@ int main (int argc, char ** argv)
       }
       double stop=usecond();
       double time = (stop-start)/Nloop*1000.0;
-      
+
       double bytes=3.0*vol*Nc*Nc*sizeof(Complex);
       double footprint=2.0*vol*Nc*Nc*sizeof(Complex);
       double flops=Nc*Nc*(6.0+8.0+8.0)*vol;
@@ -101,7 +106,7 @@ int main (int argc, char ** argv)
       }
       double stop=usecond();
       double time = (stop-start)/Nloop*1000.0;
-      
+
       double bytes=3*vol*Nc*Nc*sizeof(Complex);
       double flops=Nc*Nc*(6+8+8)*vol;
       std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes<<"    \t\t"<<bytes/time<<"\t\t" << flops/time<<std::endl;
@@ -132,13 +137,15 @@ int main (int argc, char ** argv)
       }
       double stop=usecond();
       double time = (stop-start)/Nloop*1000.0;
-      
+
       double bytes=3*vol*Nc*Nc*sizeof(Complex);
       double flops=Nc*Nc*(6+8+8)*vol;
       std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes<<"    \t\t"<<bytes/time<<"\t\t" << flops/time<<std::endl;
 
     }
 */
+
+  std::cout<<GridLogMessage << "Outer loop iterations = " << Nloop <<std::endl;
   std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
   std::cout<<GridLogMessage << "= Benchmarking SU3xSU3  mac(z,x,y)"<<std::endl;
   std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
@@ -163,7 +170,7 @@ int main (int argc, char ** argv)
       }
       double stop=usecond();
       double time = (stop-start)/Nloop*1000.0;
-      
+
       double bytes=3*vol*Nc*Nc*sizeof(Complex);
       double flops=Nc*Nc*(8+8+8)*vol;
       std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
