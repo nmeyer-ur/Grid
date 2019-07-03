@@ -76,7 +76,7 @@
     typedef float16_t pt;
     typedef uint16_t uint;
     typedef svuint16_t svuint;
-    
+
     static inline svbool_t pg1(){return svptrue_b16();}
     #if (GEN_SIMD_WIDTH == 64u)
     static inline svbool_t pg2(){return svptrue_pat_b16(SV_VL16);}
@@ -93,6 +93,7 @@
   template <>
   struct acle<Integer>{
     typedef svuint32_t vt;
+    typedef svint32x2_t vt2;    
     typedef Integer pt;
     typedef uint32_t uint;
     typedef svuint32_t svuint;

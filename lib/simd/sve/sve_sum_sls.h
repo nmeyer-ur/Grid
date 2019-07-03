@@ -48,10 +48,10 @@
     inline veci operator()(const veci &a, const veci &b){
 
       veci out;
-      svbool_t pg2 = acle<float>::pg2();
-      typename acle<float>::vt2 a_v = svld2(pg2, a.v);
-      typename acle<float>::vt2 b_v = svld2(pg2, b.v);
-      typename acle<float>::vt2 r_v;
+      svbool_t pg2 = acle<Integer>::pg2();
+      typename acle<Integer>::vt2 a_v = svld2(pg2, a.v);
+      typename acle<Integer>::vt2 b_v = svld2(pg2, b.v);
+      typename acle<Integer>::vt2 r_v;
       r_v.v0 = svadd_x(pg2, a_v.v0, b_v.v0);
       r_v.v1 = svadd_x(pg2, a_v.v0, b_v.v1);
       svst2(pg2, out.v, r_v);
