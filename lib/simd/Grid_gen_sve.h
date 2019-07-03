@@ -151,7 +151,7 @@ namespace Optimization {
 
     #elif defined(SVE_GROUP_ARITH_REAL_LD2)
       #pragma message("enabling SVE_GROUP_ARITH_REAL_LD2")
-      #define SVE_SUM
+      #define SVE_SUM_LD2
       #define SVE_SUB
       #define SVE_MULT
       #define SVE_MULTREALPART_REAL_LD2
@@ -313,6 +313,8 @@ namespace Optimization {
 
   #if defined(GENSVE) && defined(SVE_SUM_REF)
   #include "sve/sve_sum_ref.h"
+  #elif defined(GENSVE) && defined(SVE_SUM_LD2)
+  #include "sve/sve_sum_sls.h"
   #elif defined(GENSVE) && defined(SVE_SUM)
   #include "sve/sve_sum.h"
   #else
