@@ -93,7 +93,7 @@
   template <>
   struct acle<Integer>{
     typedef svuint32_t vt;
-    typedef svint32x2_t vt2;    
+    typedef svuint32x2_t vt2;    
     typedef Integer pt;
     typedef uint32_t uint;
     typedef svuint32_t svuint;
