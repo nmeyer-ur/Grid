@@ -23,9 +23,9 @@
 
       vecd out;
       svbool_t pg2 = acle<double>::pg2();
-      typename acle<T>::vt2 a_v = svld2(pg2, a.v);
-      typename acle<T>::vt2 b_v = svld2(pg2, b.v);
-      typename acle<T>::vt2 r_v;
+      typename acle<double>::vt2 a_v = svld2(pg2, a.v);
+      typename acle<double>::vt2 b_v = svld2(pg2, b.v);
+      typename acle<double>::vt2 r_v;
       r_v.v0 = svadd_x(pg2, a_v.v0, b_v.v0);
       r_v.v1 = svadd_x(pg2, a_v.v0, b_v.v1);
       svst2(pg2, out.v, r_v);
@@ -36,9 +36,9 @@
 
       vecf out;
       svbool_t pg2 = acle<float>::pg2();
-      typename acle<T>::vt2 a_v = svld2(pg2, a.v);
-      typename acle<T>::vt2 b_v = svld2(pg2, b.v);
-      typename acle<T>::vt2 r_v;
+      typename acle<float>::vt2 a_v = svld2(pg2, a.v);
+      typename acle<float>::vt2 b_v = svld2(pg2, b.v);
+      typename acle<float>::vt2 r_v;
       r_v.v0 = svadd_x(pg2, a_v.v0, b_v.v0);
       r_v.v1 = svadd_x(pg2, a_v.v0, b_v.v1);
       svst2(pg2, out.v, r_v);
@@ -49,9 +49,9 @@
 
       veci out;
       svbool_t pg2 = acle<float>::pg2();
-      typename acle<T>::vt2 a_v = svld2(pg2, a.v);
-      typename acle<T>::vt2 b_v = svld2(pg2, b.v);
-      typename acle<T>::vt2 r_v;
+      typename acle<float>::vt2 a_v = svld2(pg2, a.v);
+      typename acle<float>::vt2 b_v = svld2(pg2, b.v);
+      typename acle<float>::vt2 r_v;
       r_v.v0 = svadd_x(pg2, a_v.v0, b_v.v0);
       r_v.v1 = svadd_x(pg2, a_v.v0, b_v.v1);
       svst2(pg2, out.v, r_v);

@@ -2785,7 +2785,7 @@ scan_number_done:
         std::string result;
         for (auto c : s)
         {
-            if (c == '\0' or c == std::char_traits<char>::eof())
+            if (c == '\0') // or c == std::char_traits<char>::eof())
             {
                 // ignore EOF
                 continue;
