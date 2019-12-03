@@ -35,19 +35,83 @@ Author: Antonin Portelli <antonin.portelli@me.com>
 #include "Grid_generic_types.h"
 
 #if defined(GENSVE)
-#ifdef __ARM_FEATURE_SVE
-#ifdef __clang__
+//#ifdef __ARM_FEATURE_SVE
+//#ifdef __clang__
 #include <arm_sve.h>
+//#endif
+//#else
+//#pragma error "Missing SVE feature"
+//#endif /* __ARM_FEATURE_SVE */
 #endif
-#else
-#pragma error "Missing SVE feature"
-#endif /* __ARM_FEATURE_SVE */
+
+#ifdef __FUJITSU
+#ifdef svld1
+#undef svld1
 #endif
+#ifdef svld2
+#undef svld2
+#endif
+#define svld1(__p0,__xxx) xxx_svld1(__p0, &((__xxx)[0]))
+#define xxx_svld1(__p0,__p1)  \
+__extension__({ \
+  _Generic((__p1), \
+    default: __builtin_fj_svld1_f16, \
+    float32_t *: __builtin_fj_svld1_f32, \
+    const float32_t*: __builtin_fj_svld1_f32, \
+    float64_t *: __builtin_fj_svld1_f64, \
+    const float64_t*: __builtin_fj_svld1_f64, \
+    int16_t*: __builtin_fj_svld1_s16, \
+    const int16_t*: __builtin_fj_svld1_s16, \
+    int32_t *: __builtin_fj_svld1_s32, \
+    const int32_t *: __builtin_fj_svld1_s32, \
+    int64_t *: __builtin_fj_svld1_s64, \
+    const int64_t *: __builtin_fj_svld1_s64, \
+    int8_t *: __builtin_fj_svld1_s8, \
+    const int8_t *: __builtin_fj_svld1_s8, \
+    uint16_t *: __builtin_fj_svld1_u16, \
+    const uint16_t *: __builtin_fj_svld1_u16, \
+    uint32_t *: __builtin_fj_svld1_u32, \
+    const uint32_t *: __builtin_fj_svld1_u32, \
+    uint64_t *: __builtin_fj_svld1_u64, \
+    const uint64_t *: __builtin_fj_svld1_u64, \
+    uint8_t *: __builtin_fj_svld1_u8, \
+    const uint8_t *: __builtin_fj_svld1_u8)(__p0, __p1); \
+})
+
+#define svld2(__p0,__xxx) xxx_svld2(__p0, &((__xxx)[0]))
+#define xxx_svld2(__p0,__p1)  \
+__extension__( \
+  _Generic((__p1), \
+    default: __builtin_fj_svld2_f16, \
+    float32_t *: __builtin_fj_svld2_f32, \
+    const float32_t *: __builtin_fj_svld2_f32, \
+    float64_t *: __builtin_fj_svld2_f64, \
+    const float64_t *: __builtin_fj_svld2_f64, \
+    int16_t *: __builtin_fj_svld2_s16, \
+    const int16_t *: __builtin_fj_svld2_s16, \
+    int32_t *: __builtin_fj_svld2_s32, \
+    const int32_t *: __builtin_fj_svld2_s32, \
+    int64_t *: __builtin_fj_svld2_s64, \
+    const int64_t *: __builtin_fj_svld2_s64, \
+    int8_t *: __builtin_fj_svld2_s8, \
+    const int8_t *: __builtin_fj_svld2_s8, \
+    uint16_t *: __builtin_fj_svld2_u16, \
+    const uint16_t *: __builtin_fj_svld2_u16, \
+    uint32_t *: __builtin_fj_svld2_u32, \
+    const uint32_t *: __builtin_fj_svld2_u32, \
+    uint64_t *: __builtin_fj_svld2_u64, \
+    const uint64_t *: __builtin_fj_svld2_u64, \
+    uint8_t *: __builtin_fj_svld2_u8, \
+    const uint8_t *: __builtin_fj_svld2_u8)(__p0, __p1) \
+)
+
+#endif //__FUJITSU
+
 
 namespace Grid {
 namespace Optimization {
 
-  #if defined(GENSVE) && defined(__clang__)
+  #if defined(GENSVE) //&& defined(__clang__)
   #include "sve/sve_acle.h"
 
     #if defined(SVE_CPLX_LD1)
@@ -854,7 +918,7 @@ namespace Optimization {
 
   #endif
 
-  #if defined(GENSVE) && defined(__clang__)
+  #if defined(GENSVE) //&& defined(__clang__)
   inline int sve_vector_width(){return svcntb();}
   #else
   inline int sve_vector_width(){return GEN_SIMD_WIDTH;}

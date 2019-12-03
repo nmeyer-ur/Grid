@@ -4,8 +4,8 @@
 #pragma message("include sve_reduce_sls.h")
 
   // tree-based reduction
-  #define svred(pg, v)\
-  svaddv(pg, v);
+#define svred(pg,v) \
+  svaddv(pg,v)
 
   // left-to-right reduction
   // #define svred(pg, v)\
@@ -40,8 +40,8 @@
 // LD2: tested, working
     svbool_t pg2 = acle<float>::pg2();
     typename acle<float>::vt2 a_v = svld2(pg2, in.v);
-    typename acle<float>::pt a = (typename acle<float>::pt)svred(pg2, a_v.v0);
-    typename acle<float>::pt b = (typename acle<float>::pt)svred(pg2, a_v.v1);
+    typename acle<float>::pt a = static_cast<typename acle<float>::pt>(svred(pg2, a_v.v0));
+    typename acle<float>::pt b = static_cast<typename acle<float>::pt>(svred(pg2, a_v.v1));
 
     return Grid::ComplexF(a, b);
 
@@ -75,8 +75,8 @@
 // LD2: tested, working
     svbool_t pg2 = acle<double>::pg2();
     typename acle<double>::vt2 a_v = svld2(pg2, in.v);
-    typename acle<double>::pt a = (typename acle<double>::pt)svred(pg2, a_v.v0);
-    typename acle<double>::pt b = (typename acle<double>::pt)svred(pg2, a_v.v1);
+    typename acle<double>::pt a = static_cast<typename acle<double>::pt>(svred(pg2, a_v.v0));
+    typename acle<double>::pt b = static_cast<typename acle<double>::pt>(svred(pg2, a_v.v1));
 
     return Grid::ComplexD(a, b);
   }
