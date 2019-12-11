@@ -224,7 +224,7 @@ class Grid_simd {
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
     //*y = (*a) * (*x) + (*y);
-    *y = Optimization::MultAddComplex(*a, *x, *y);
+    *y = Optimization::MultAddComplex::mac(*a, *x, *y);
   };
 
   friend inline void mult(Grid_simd *__restrict__ y,
