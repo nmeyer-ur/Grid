@@ -224,7 +224,7 @@ class Grid_simd {
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
     //*y = (*a) * (*x) + (*y);
-    *y = Optimization::MultAddComplex::mac(*a, *x, *y);
+    y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
   };
 
   friend inline void mult(Grid_simd *__restrict__ y,
@@ -431,6 +431,13 @@ class Grid_simd {
   friend inline void exchange3(Grid_simd &out1,Grid_simd &out2, const Grid_simd &in1, const Grid_simd &in2){
     Optimization::Exchange::Exchange3(out1.v,out2.v,in1.v,in2.v);
   }
+  ////////////////////////////////
+  // FCMLA MAC
+  ////////////////////////////////
+  friend inline void fcmla_mac(Grid_simd &out, const Grid_simd &in1, const Grid_simd &in2, const Grid_simd &in3){
+    out.v = Optimization::MultAddComplex::mac(in1.v,in2.v,in3.v);
+  }
+
   ////////////////////////////////////////////////////////////////////
   // General permute; assumes vector length is same across
   // all subtypes; may not be a good assumption, but could
