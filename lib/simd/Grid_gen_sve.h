@@ -113,6 +113,7 @@ namespace Optimization {
       #define SVE_MULTREALPART_CPLX_LD1
       #define SVE_MADDREALPART_CPLX_LD1
       #define SVE_MULTCOMPLEX_CPLX_LD1
+      #define SVE_MULTADDCOMPLEX_CPLX_LD1
       #define SVE_DIV
       #define SVE_CONJ
       #define SVE_TIMESMINUSI
@@ -472,6 +473,10 @@ namespace Optimization {
 
   #undef cmul
 
+  #endif
+
+  #if defined(GENSVE) && defined(SVE_MULTCOMPLEX_CPLX_LD1)
+  #include "sve/sve_multaddcomplex.h"
   #endif
 
 /*

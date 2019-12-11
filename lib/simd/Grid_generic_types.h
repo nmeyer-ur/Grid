@@ -97,7 +97,7 @@ namespace Optimization {
 
   typedef vec<float>     vecf;
   typedef vec<double>    vecd;
-  typedef vec<uint16_t> vech; // half precision comms
+  typedef vec<uint16_t>  vech; // half precision comms
   typedef vec<Integer>   veci;
 
 }}
