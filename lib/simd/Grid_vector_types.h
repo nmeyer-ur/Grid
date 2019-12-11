@@ -223,8 +223,8 @@ class Grid_simd {
   friend inline void mac(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    //*y = (*a) * (*x) + (*y);
-    y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
+    *y = (*a) * (*x) + (*y);
+    //y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
   };
 
   friend inline void mult(Grid_simd *__restrict__ y,
@@ -434,9 +434,9 @@ class Grid_simd {
   ////////////////////////////////
   // FCMLA MAC
   ////////////////////////////////
-  friend inline void fcmla_mac(Grid_simd &out, const Grid_simd &in1, const Grid_simd &in2, const Grid_simd &in3){
-    out.v = Optimization::MultAddComplex::mac(in1.v,in2.v,in3.v);
-  }
+  //friend inline void fcmla_mac(Grid_simd &out, const Grid_simd &in1, const Grid_simd &in2, const Grid_simd &in3){
+  //    out.v = Optimization::MultAddComplex::mac(in1.v,in2.v,in3.v);
+  //}
 
   ////////////////////////////////////////////////////////////////////
   // General permute; assumes vector length is same across
