@@ -50,7 +50,6 @@ configure --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double
     --disable-openmp --enable-comms=none CXX=armclang++ \
     CXXFLAGS="-O3 -march=armv8-a+sve -fno-unroll-loops -mllvm \
     -vectorizer-min-trip-count=2 -DGENSVE -D<implementation>"
-    CXXFLAGS="-O3 -march=armv8-a+sve -fno-unroll-loops -mllvm
 make
 ```
 
