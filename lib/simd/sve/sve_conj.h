@@ -30,6 +30,7 @@ struct Conj{
     vec<T> out;
     svbool_t pg1 = acle<T>::pg1();
     svbool_t pg_odd = acle<T>::pg_odd();
+    typename acle<T>::vt a_v = svld1(pg1, a.v);
     typename acle<T>::vt r_v = svneg_x(pg_odd, a_v);
     svst1(pg1, out.v, r_v);
 
