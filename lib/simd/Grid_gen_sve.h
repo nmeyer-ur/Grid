@@ -118,8 +118,8 @@ namespace Optimization {
       #define SVE_CONJ
       #define SVE_TIMESMINUSI
       #define SVE_TIMESI
-//  #define SVE_REDUCE
-      #define SVE_REDUCE_REAL_LD2
+      #define SVE_REDUCE
+      //#define SVE_REDUCE_REAL_LD2
 
     #elif defined(SVE_GROUP_ARITH_CPLX_REF)
       #pragma message("enabling SVE_GROUP_ARITH_CPLX_REF")
@@ -386,7 +386,8 @@ namespace Optimization {
   #if defined(GENSVE) && defined(SVE_MULTREALPART_CPLX_REF)
   #include "sve/sve_multrealpart_ref.h"
   #elif defined(GENSVE) && defined(SVE_MULTREALPART_CPLX_LD1)
-  #include "sve/sve_multrealpart.h"
+  //#include "sve/sve_multrealpart.h"
+  #include "sve/sve_multrealpart_real.h"
   #elif defined(GENSVE) && defined(SVE_MULTREALPART_REAL_LD1)
   #include "sve/sve_multrealpart_real.h"
   #elif defined(GENSVE) && defined(SVE_MULTREALPART_REAL_LD2)
@@ -420,7 +421,8 @@ namespace Optimization {
   #elif defined(GENSVE) && defined(SVE_MADDREALPART_REAL_LD2)
   #include "sve/sve_maddrealpart_sls.h"
   #elif defined(GENSVE) && defined(SVE_MADDREALPART_CPLX_LD1)
-  #include "sve/sve_maddrealpart.h"
+  //#include "sve/sve_maddrealpart.h"
+  #include "sve/sve_maddrealpart_real.h"
   #else
   #pragma message("generic MaddRealPart")
   struct MaddRealPart{

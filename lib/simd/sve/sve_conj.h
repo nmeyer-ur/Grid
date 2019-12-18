@@ -3,6 +3,7 @@
 
 #pragma message("include sve_conj.h")
 
+/*
   struct Conj{
     // Complex
     template <typename T>
@@ -19,5 +20,21 @@
       return out;
     }
   };
+*/
+
+struct Conj{
+  // Complex
+  template <typename T>
+  inline vec<T> operator()(const vec<T> &a){
+
+    vec<T> out;
+    svbool_t pg1 = acle<T>::pg1();
+    svbool_t pg_odd = acle<T>::pg_odd();
+    typename acle<T>::vt r_v = svneg_x(pg_odd, a_v);
+    svst1(pg1, out.v, r_v);
+
+    return out;
+  }
+};
 
 #endif

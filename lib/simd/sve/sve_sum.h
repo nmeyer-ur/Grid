@@ -2,6 +2,7 @@
 #define SVE_SUM_H
 
 #pragma message("include sve_sum.h")
+
 /*
   struct Sum{
     template <typename T>
@@ -22,7 +23,7 @@
     inline vecd operator()(const vecd &a, const vecd &b){
 
       vecd out;
-      svbool_t pg1 = svptrue_b64();
+      svbool_t pg1 = acle<double>::pg1();
       svfloat64_t a_v = svld1(pg1, a.v);
       svfloat64_t b_v = svld1(pg1, b.v);
       svfloat64_t r_v = svadd_x(pg1, a_v, b_v);
@@ -33,7 +34,7 @@
     inline vecf operator()(const vecf &a, const vecf &b){
 
       vecf out;
-      svbool_t pg1 = svptrue_b32();
+      svbool_t pg1 = acle<float>::pg1();
       svfloat32_t a_v = svld1(pg1, a.v);
       svfloat32_t b_v = svld1(pg1, b.v);
       svfloat32_t r_v = svadd_x(pg1, a_v, b_v);
