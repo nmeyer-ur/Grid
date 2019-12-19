@@ -88,6 +88,14 @@ namespace Optimization {
     constexpr static unsigned int c = GEN_SIMD_WIDTH/4u;
     constexpr static unsigned int r = GEN_SIMD_WIDTH/2u;
   };
+  template <> struct W<uint64_t> {
+    constexpr static unsigned int c = GEN_SIMD_WIDTH/16u;
+    constexpr static unsigned int r = GEN_SIMD_WIDTH/8u;
+  };
+  template <> struct W<uint32_t> {
+    constexpr static unsigned int c = GEN_SIMD_WIDTH/8u;
+    constexpr static unsigned int r = GEN_SIMD_WIDTH/4u;
+  };
 
   // SIMD vector types
   template <typename T>
