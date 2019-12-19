@@ -9,7 +9,7 @@
     inline vec<T> operator()(const vec<T> &a, const vec<T> &b){
 
       vec<T> out;
-      const vec<acle<T>::uint> tbl1 = acle<T>::tbl1();
+      const vec<typename acle<T>::uint> tbl1 = acle<T>::tbl1();
       svbool_t pg1 = acle<T>::pg1();
       svbool_t pg_odd = acle<T>::pg_odd();
 
