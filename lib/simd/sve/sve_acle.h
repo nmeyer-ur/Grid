@@ -28,6 +28,11 @@
     static inline svbool_t pg2(){return svptrue_pat_b64(SV_VL4);}
     //static inline svbool_t pg4(){return svptrue_pat_b16(SV_VL8);}
     static inline svbool_t pg4(){return svptrue_pat_b64(SV_VL2);}
+    // exchange neighboring elements
+    static inline vec<double>& tbl1(){
+        vec<double> t = {1, 0, 3, 2, 5, 4, 7, 6};
+        return &t;
+    }
     #elif (GEN_SIMD_WIDTH == 32u)
     //static inline svbool_t pg2(){return svptrue_pat_b16(SV_VL8);}
     static inline svbool_t pg2(){return svptrue_pat_b64(SV_VL2);}
@@ -58,6 +63,11 @@
     #if (GEN_SIMD_WIDTH == 64u)
     //static inline svbool_t pg2(){return svptrue_pat_b16(SV_VL16);}
     static inline svbool_t pg2(){return svptrue_pat_b32(SV_VL8);}
+    // exchange neighboring elements
+    static inline vec<float>& tbl1(){
+        vec<double> t = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+        return &t;
+    }
     #elif (GEN_SIMD_WIDTH == 32u)
     //static inline svbool_t pg2(){return svptrue_pat_b16(SV_VL8);}
     static inline svbool_t pg2(){return svptrue_pat_b32(SV_VL4);}
@@ -93,7 +103,7 @@
   template <>
   struct acle<Integer>{
     typedef svuint32_t vt;
-    typedef svuint32x2_t vt2;    
+    typedef svuint32x2_t vt2;
     typedef Integer pt;
     typedef uint32_t uint;
     typedef svuint32_t svuint;

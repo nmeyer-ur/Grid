@@ -3,6 +3,7 @@
 
 #pragma message("include sve_timesi.h")
 
+/*
   struct TimesI{
     // Complex
     template <typename T>
@@ -19,5 +20,27 @@
       return out;
     }
   };
+*/
+
+  struct TimesI{
+    // Complex
+    template <typename T>
+    inline vec<T> operator()(const vec<T> &a, const vec<T> &b){
+
+      vec<T> out;
+      vec<T>& tbl1 = acle<T>::tlb1();
+      typename acle<T>::svuint tbl1_v = svld1(pg1, tbl1.v);
+
+      svbool_t pg1 = acle<T>::pg1();
+      svbool_t pg_even = acle<T>::pg_even();
+      typename acle<T>::vt a_v = svld1(pg1, a.v);
+      a_v = svtbl(a_v, tbl1_v);
+      typename acle<T>::vt r_v = svneg_x(pg_even, a_v);
+      svst1(pg1, out.v, r_v);
+
+      return out;
+    }
+  };
+
 
 #endif
