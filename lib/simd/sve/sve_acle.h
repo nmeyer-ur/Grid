@@ -29,8 +29,16 @@
     //static inline svbool_t pg4(){return svptrue_pat_b16(SV_VL8);}
     static inline svbool_t pg4(){return svptrue_pat_b64(SV_VL2);}
     // exchange neighboring elements
-    static inline vec<uint64_t> tbl1(){
+    static inline vec<uint64_t> tbl_swap(){
         const vec<uint64_t> t = {1, 0, 3, 2, 5, 4, 7, 6};
+        return t;
+    }
+    static inline vec<uint64_t> tbl0(){
+        const vec<uint64_t> t = {4, 5, 6, 7, 0, 1, 2, 3};
+        return t;
+    }
+    static inline vec<uint64_t> tbl1(){
+        const vec<uint64_t> t = {2, 3, 0, 1, 6, 7, 4, 5};
         return t;
     }
     #elif (GEN_SIMD_WIDTH == 32u)
@@ -64,8 +72,20 @@
     //static inline svbool_t pg2(){return svptrue_pat_b16(SV_VL16);}
     static inline svbool_t pg2(){return svptrue_pat_b32(SV_VL8);}
     // exchange neighboring elements
-    static inline vec<uint32_t> tbl1(){
+    static inline vec<uint32_t> tbl_swap(){
         const vec<uint32_t> t = {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
+        return t;
+    }
+    static inline vec<uint32_t> tbl0(){
+        const vec<uint32_t> t = {8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7};
+        return t;
+    }
+    static inline vec<uint32_t> tbl1(){
+        const vec<uint32_t> t = {4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11};
+        return t;
+    }
+    static inline vec<uint32_t> tbl2(){
+        const vec<uint32_t> t = {2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13};
         return t;
     }
     #elif (GEN_SIMD_WIDTH == 32u)

@@ -36,8 +36,7 @@
       return out;
     }
 
-    template <typename T>
-    static inline vec<T> Permute2(const vec<T> &in) {
+    static inline vec<double> Permute2(const vec<double> &in) {
 
 /*
       vec<T> out;
@@ -47,13 +46,34 @@
       typename acle<double>::vt r_v = svtrn1(b_v, a_v);
       svst1(pg1, (typename acle<double>::pt*)out.v, r_v);
 */
+      vec<double> out;
+      const vec<typename acle<double>::uint> tbl_swap = acle<double>::tbl_swap();
+      svbool_t pg1 = acle<double>::pg1();
+      typename acle<double>::vt a_v = svld1(pg1, in.v);
+      typename acle<double>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+      typename acle<double>::vt r_v = svtbl(a_v, tbl_swap_v);
+      svst1(pg1, out.v, r_v);
+
+      return out;
+    }
+
+    static inline vec<float> Permute2(const vec<float> &in) {
+
+/*
       vec<T> out;
-      const vec<typename acle<double>::uint> tbl1 = acle<double>::tbl1();
       svbool_t pg1 = acle<double>::pg1();
       typename acle<double>::vt a_v = svld1(pg1, (typename acle<double>::pt*)in.v);
-      typename acle<double>::svuint tbl1_v = svld1(pg1, tbl1.v);
-      typename acle<double>::vt r_v = svtbl(a_v, tbl1_v);
+      typename acle<double>::vt b_v = svtrn2(a_v, a_v);
+      typename acle<double>::vt r_v = svtrn1(b_v, a_v);
       svst1(pg1, (typename acle<double>::pt*)out.v, r_v);
+*/
+      vec<float> out;
+      const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl2();
+      svbool_t pg1 = acle<float>::pg1();
+      typename acle<float>::vt a_v = svld1(pg1, in.v);
+      typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+      typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
+      svst1(pg1, out.v, r_v);
 
       return out;
     }
@@ -69,11 +89,11 @@
       svst1(pg1, out.v, r_v);
 */
       vec<float> out;
-      const vec<typename acle<float>::uint> tbl1 = acle<float>::tbl1();
+      const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl_swap();
       svbool_t pg1 = acle<float>::pg1();
       typename acle<float>::vt a_v = svld1(pg1, in.v);
-      typename acle<float>::svuint tbl1_v = svld1(pg1, tbl1.v);
-      typename acle<float>::vt r_v = svtbl(a_v, tbl1_v);
+      typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+      typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
       svst1(pg1, (typename acle<float>::pt*)out.v, r_v);
 
       return out;
