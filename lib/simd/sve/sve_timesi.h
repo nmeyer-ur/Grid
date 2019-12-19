@@ -28,7 +28,7 @@
     inline vec<T> operator()(const vec<T> &a, const vec<T> &b){
 
       vec<T> out;
-      vec<T> tbl1 = acle<T>::tlb1();
+      const vec<T> tbl1 = acle<T>::tbl1();
       svbool_t pg1 = acle<T>::pg1();
       svbool_t pg_even = acle<T>::pg_even();
 
