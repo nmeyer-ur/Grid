@@ -68,7 +68,7 @@
       typename acle<float>::vt r_v = svtrn1(b_v, a_v);
       svst1(pg1, out.v, r_v);
 */
-      vec<T> out;
+      vec<float> out;
       const vec<typename acle<float>::uint> tbl1 = acle<float>::tbl1();
       svbool_t pg1 = acle<float>::pg1();
       typename acle<float>::vt a_v = svld1(pg1, in.v);
