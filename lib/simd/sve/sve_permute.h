@@ -39,11 +39,21 @@
     template <typename T>
     static inline vec<T> Permute2(const vec<T> &in) {
 
+/*
       vec<T> out;
       svbool_t pg1 = acle<double>::pg1();
       typename acle<double>::vt a_v = svld1(pg1, (typename acle<double>::pt*)in.v);
       typename acle<double>::vt b_v = svtrn2(a_v, a_v);
       typename acle<double>::vt r_v = svtrn1(b_v, a_v);
+      svst1(pg1, (typename acle<double>::pt*)out.v, r_v);
+*/
+      vec<T> out;
+      const vec<typename acle<double>::uint> tbl1 = acle<double>::tbl1();
+      svbool_t pg1 = acle<double>::pg1();
+
+      typename acle<double>::svuint tbl1_v = svld1(pg1, tbl1.v);
+      typename acle<double>::vt a_v = svld1(pg1, a.v);
+      typename acle<double>::vt r_v = svtbl(a_v, tbl1_v);
       svst1(pg1, (typename acle<double>::pt*)out.v, r_v);
 
       return out;
@@ -51,12 +61,22 @@
 
     static inline vec<float> Permute3(const vec<float> &in) {
 
+/*
       vec<float> out;
       svbool_t pg1 = acle<float>::pg1();
       typename acle<float>::vt a_v = svld1(pg1, in.v);
       typename acle<float>::vt b_v = svtrn2(a_v, a_v);
       typename acle<float>::vt r_v = svtrn1(b_v, a_v);
       svst1(pg1, out.v, r_v);
+*/
+      vec<T> out;
+      const vec<typename acle<float>::uint> tbl1 = acle<float>::tbl1();
+      svbool_t pg1 = acle<float>::pg1();
+
+      typename acle<float>::svuint tbl1_v = svld1(pg1, tbl1.v);
+      typename acle<float>::vt a_v = svld1(pg1, a.v);
+      typename acle<float>::vt r_v = svtbl(a_v, tbl1_v);
+      svst1(pg1, (typename acle<float>::pt*)out.v, r_v);
 
       return out;
     }
@@ -114,10 +134,6 @@
     {\
       l[i] = i^_mask;\
     }
-
-    // NOTE: unsigned int does not match acle<T>::uint but works !
-    // to be adopted properly at some stage
-    // Peter: More information needed, hence next function unchecked
 
     #define DECL_PERMUTE_N(n)\
     template <typename T>\
