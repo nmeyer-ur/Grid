@@ -121,7 +121,7 @@
       typename acle<float>::vt a_v = svld1(pg1, in.v);
       typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
       typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
-      svst1(pg1, (typename acle<float>::pt*)out.v, r_v);
+      svst1(pg1, out.v, r_v);
 
       return out;
     }
