@@ -17,10 +17,11 @@
       return out;
     }
 
-    // specialization for SVE 512-bit vector length
+    // specialization for 512-bit vector length
     #if (GEN_SIMD_WIDTH == 64u)
     #pragma message("specialize permute for 512 bit vector length")
 
+/*
     template <typename T>
     static inline vec<T> Permute1(const vec<T> &in) {
 
@@ -32,6 +33,32 @@
       typename acle<double>::vt b_v = svtrn2(a_v, a_v);
       typename acle<double>::vt r_v = svtrn1(b_v, a_v);
       svst1(pg1, (typename acle<double>::pt*)out.v, r_v);
+
+      return out;
+    }
+*/
+    static inline vec<double> Permute1(const vec<double> &in) {
+
+      vec<double> out;
+      const vec<typename acle<double>::uint> tbl_swap = acle<double>::tbl1();
+      svbool_t pg1 = acle<double>::pg1();
+      typename acle<double>::vt a_v = svld1(pg1, in.v);
+      typename acle<double>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+      typename acle<double>::vt r_v = svtbl(a_v, tbl_swap_v);
+      svst1(pg1, out.v, r_v);
+
+      return out;
+    }
+
+    static inline vec<float> Permute1(const vec<float> &in) {
+
+      vec<float> out;
+      const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl1();
+      svbool_t pg1 = acle<float>::pg1();
+      typename acle<float>::vt a_v = svld1(pg1, in.v);
+      typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+      typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
+      svst1(pg1, out.v, r_v);
 
       return out;
     }
@@ -103,7 +130,7 @@
       return in;
     }
 
-    // specialization for SVE 512-bit vector length
+    // specialization for 256-bit vector length
     #elif (GEN_SIMD_WIDTH == 32u)
     #pragma message("specialize permute for 256 bit vector length")
 
