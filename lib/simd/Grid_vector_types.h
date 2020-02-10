@@ -219,13 +219,35 @@ class Grid_simd {
   // mac, mult, sub, add, adj
   ///////////////////////////////////////////////
 
+// SVE start
+
   // FIXME -- alias this to an inline MAC struct.
   friend inline void mac(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    *y = (*a) * (*x) + (*y);
-    //y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
+    //*y = (*a) * (*x) + (*y);
+
+    // works!
+    y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
+
+    // also works!
+    //y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
+    //y->v = Optimization::MultAddComplex::mac1(a->v, x->v, y->v);
   };
+
+  friend inline void mac0(Grid_simd *__restrict__ y,
+                         const Grid_simd *__restrict__ a,
+                         const Grid_simd *__restrict__ x) {
+    y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
+  };
+
+  friend inline void mac1(Grid_simd *__restrict__ y,
+                         const Grid_simd *__restrict__ a,
+                         const Grid_simd *__restrict__ x) {
+    y->v = Optimization::MultAddComplex::mac1(a->v, x->v, y->v);
+  };
+
+// SVE end
 
   friend inline void mult(Grid_simd *__restrict__ y,
                           const Grid_simd *__restrict__ l,
