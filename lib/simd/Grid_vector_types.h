@@ -225,10 +225,10 @@ class Grid_simd {
   friend inline void mac(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    *y = (*a) * (*x) + (*y);
+    //*y = (*a) * (*x) + (*y);
 
     // works!
-    //y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
+    y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
 
     // also works!
     //y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);

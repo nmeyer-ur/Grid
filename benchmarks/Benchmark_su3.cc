@@ -35,11 +35,13 @@ using namespace Grid::QCD;
 int main (int argc, char ** argv)
 {
   Grid_init(&argc,&argv);
-#define LMAX (20)
+//#define LMAX (20)   // armie
+#define LMAX (40) 
 #define LMIN (2)
 
   int iterations = GridThread::GetIterations();
-  int64_t Nloop=20;
+  //int64_t Nloop=20; // armie
+  int64_t Nloop=1000;
 
   if (iterations != -1)
     Nloop = iterations;
@@ -49,7 +51,9 @@ int main (int argc, char ** argv)
 
   int64_t threads = GridThread::GetThreads();
   std::cout<<GridLogMessage << "Grid is setup to use "<<threads<<" threads"<<std::endl;
-/*
+
+// cut here if necessary
+
   std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
   std::cout<<GridLogMessage << "= Benchmarking SU3xSU3  x= x*y"<<std::endl;
   std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
@@ -143,7 +147,7 @@ int main (int argc, char ** argv)
       std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes<<"    \t\t"<<bytes/time<<"\t\t" << flops/time<<std::endl;
 
     }
-*/
+
 
   std::cout<<GridLogMessage << "Outer loop iterations = " << Nloop <<std::endl;
   std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
