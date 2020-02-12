@@ -225,10 +225,10 @@ class Grid_simd {
   friend inline void mac(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    //*y = (*a) * (*x) + (*y);
+    *y = (*a) * (*x) + (*y);
 
     // works!
-    y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
+    //y->v = Optimization::MultAddComplex::mac(a->v, x->v, y->v);
 
     // also works!
     //y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
@@ -238,13 +238,15 @@ class Grid_simd {
   friend inline void mac0(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
+    *y = (*a) * (*x) + (*y);
+    //y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
   };
 
   friend inline void mac1(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    y->v = Optimization::MultAddComplex::mac1(a->v, x->v, y->v);
+    //y->v = Optimization::MultAddComplex::mac1(a->v, x->v, y->v);
+    return;
   };
 
 // SVE end
@@ -270,6 +272,18 @@ class Grid_simd {
                          const Grid_simd *__restrict__ x) {
     *y = (*a) * (*x) + (*y);
   };
+// SVE
+  friend inline void mac0(Grid_simd *__restrict__ y,
+                         const Scalar_type *__restrict__ a,
+                         const Grid_simd *__restrict__ x) {
+    *y = (*a) * (*x) + (*y);
+  };
+  friend inline void mac1(Grid_simd *__restrict__ y,
+                         const Scalar_type *__restrict__ a,
+                         const Grid_simd *__restrict__ x) {
+    return;
+  };
+// SVE end
   friend inline void mult(Grid_simd *__restrict__ y,
                           const Scalar_type *__restrict__ l,
                           const Grid_simd *__restrict__ r) {
@@ -291,6 +305,19 @@ class Grid_simd {
                          const Scalar_type *__restrict__ x) {
     *y = (*a) * (*x) + (*y);
   };
+// SVE
+  friend inline void mac0(Grid_simd *__restrict__ y,
+                         const Grid_simd *__restrict__ a,
+                         const Scalar_type *__restrict__ x) {
+    *y = (*a) * (*x) + (*y);
+  };
+  friend inline void mac1(Grid_simd *__restrict__ y,
+                         const Grid_simd *__restrict__ a,
+                         const Scalar_type *__restrict__ x) {
+    return;
+  };
+// SVE end
+
   friend inline void mult(Grid_simd *__restrict__ y,
                           const Grid_simd *__restrict__ l,
                           const Scalar_type *__restrict__ r) {
@@ -453,12 +480,6 @@ class Grid_simd {
   friend inline void exchange3(Grid_simd &out1,Grid_simd &out2, const Grid_simd &in1, const Grid_simd &in2){
     Optimization::Exchange::Exchange3(out1.v,out2.v,in1.v,in2.v);
   }
-  ////////////////////////////////
-  // FCMLA MAC
-  ////////////////////////////////
-  //friend inline void fcmla_mac(Grid_simd &out, const Grid_simd &in1, const Grid_simd &in2, const Grid_simd &in3){
-  //    out.v = Optimization::MultAddComplex::mac(in1.v,in2.v,in3.v);
-  //}
 
   ////////////////////////////////////////////////////////////////////
   // General permute; assumes vector length is same across
