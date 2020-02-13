@@ -141,7 +141,7 @@ strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatri
     for(int c3=0;c3<N;c3++){
         for(int c1=0;c1<N;c1++){
             for(int c2=0;c2<N;c2++){
-                mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
+                mac01_inner(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
             }
         }
     }
@@ -176,7 +176,7 @@ strong_inline void mac01_middle(iMatrix<rrtype,N> * __restrict__ ret,const iMatr
     for(int c3=0;c3<N;c3++){
         for(int c1=0;c1<N;c1++){
             for(int c2=0;c2<N;c2++){
-                mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
+                mac01_middle(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
             }
         }
     }
@@ -213,7 +213,7 @@ strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iMatri
     for(int c3=0;c3<N;c3++){
         for(int c1=0;c1<N;c1++){
             for(int c2=0;c2<N;c2++){
-                mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
+                mac01_outer(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
             }
         }
     }
