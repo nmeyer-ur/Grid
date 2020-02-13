@@ -36,7 +36,7 @@ int main (int argc, char ** argv)
 {
   Grid_init(&argc,&argv);
 //#define LMAX (20)   // armie
-#define LMAX (40) 
+#define LMAX (40)
 #define LMIN (2)
 
   int iterations = GridThread::GetIterations();
@@ -180,6 +180,104 @@ int main (int argc, char ** argv)
       std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
 
     }
+
+    std::cout<<GridLogMessage << "Outer loop iterations = " << Nloop <<std::endl;
+    std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
+    std::cout<<GridLogMessage << "= Benchmarking SU3xSU3  mac01_inner(z,x,y)"<<std::endl;
+    std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
+    std::cout<<GridLogMessage << "  L  "<<"\t\t"<<"Mbytes"<<"\t\t\t"<<"GB/s\t\t GFlop/s"<<std::endl;
+    std::cout<<GridLogMessage << "----------------------------------------------------------"<<std::endl;
+
+    for(int lat=LMIN;lat<=LMAX;lat+=2){
+
+        std::vector<int> latt_size  ({lat*mpi_layout[0],lat*mpi_layout[1],lat*mpi_layout[2],lat*mpi_layout[3]});
+        int64_t vol = latt_size[0]*latt_size[1]*latt_size[2]*latt_size[3];
+
+        GridCartesian     Grid(latt_size,simd_layout,mpi_layout);
+        //GridParallelRNG          pRNG(&Grid);      pRNG.SeedFixedIntegers(std::vector<int>({45,12,81,9}));
+
+        LatticeColourMatrix z(&Grid); //random(pRNG,z);
+        LatticeColourMatrix x(&Grid); //random(pRNG,x);
+        LatticeColourMatrix y(&Grid); //random(pRNG,y);
+
+        double start=usecond();
+        for(int64_t i=0;i<Nloop;i++){
+  	mac01_inner(z,x,y);
+        }
+        double stop=usecond();
+        double time = (stop-start)/Nloop*1000.0;
+
+        double bytes=3*vol*Nc*Nc*sizeof(Complex);
+        double flops=Nc*Nc*(8+8+8)*vol;
+        std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
+
+      }
+
+
+      std::cout<<GridLogMessage << "Outer loop iterations = " << Nloop <<std::endl;
+      std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
+      std::cout<<GridLogMessage << "= Benchmarking SU3xSU3  mac01_middle(z,x,y)"<<std::endl;
+      std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
+      std::cout<<GridLogMessage << "  L  "<<"\t\t"<<"Mbytes"<<"\t\t\t"<<"GB/s\t\t GFlop/s"<<std::endl;
+      std::cout<<GridLogMessage << "----------------------------------------------------------"<<std::endl;
+
+      for(int lat=LMIN;lat<=LMAX;lat+=2){
+
+          std::vector<int> latt_size  ({lat*mpi_layout[0],lat*mpi_layout[1],lat*mpi_layout[2],lat*mpi_layout[3]});
+          int64_t vol = latt_size[0]*latt_size[1]*latt_size[2]*latt_size[3];
+
+          GridCartesian     Grid(latt_size,simd_layout,mpi_layout);
+          //GridParallelRNG          pRNG(&Grid);      pRNG.SeedFixedIntegers(std::vector<int>({45,12,81,9}));
+
+          LatticeColourMatrix z(&Grid); //random(pRNG,z);
+          LatticeColourMatrix x(&Grid); //random(pRNG,x);
+          LatticeColourMatrix y(&Grid); //random(pRNG,y);
+
+          double start=usecond();
+          for(int64_t i=0;i<Nloop;i++){
+    	mac01_middle(z,x,y);
+          }
+          double stop=usecond();
+          double time = (stop-start)/Nloop*1000.0;
+
+          double bytes=3*vol*Nc*Nc*sizeof(Complex);
+          double flops=Nc*Nc*(8+8+8)*vol;
+          std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
+
+        }
+
+        std::cout<<GridLogMessage << "Outer loop iterations = " << Nloop <<std::endl;
+        std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
+        std::cout<<GridLogMessage << "= Benchmarking SU3xSU3  mac01_outer(z,x,y)"<<std::endl;
+        std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
+        std::cout<<GridLogMessage << "  L  "<<"\t\t"<<"Mbytes"<<"\t\t\t"<<"GB/s\t\t GFlop/s"<<std::endl;
+        std::cout<<GridLogMessage << "----------------------------------------------------------"<<std::endl;
+
+        for(int lat=LMIN;lat<=LMAX;lat+=2){
+
+            std::vector<int> latt_size  ({lat*mpi_layout[0],lat*mpi_layout[1],lat*mpi_layout[2],lat*mpi_layout[3]});
+            int64_t vol = latt_size[0]*latt_size[1]*latt_size[2]*latt_size[3];
+
+            GridCartesian     Grid(latt_size,simd_layout,mpi_layout);
+            //GridParallelRNG          pRNG(&Grid);      pRNG.SeedFixedIntegers(std::vector<int>({45,12,81,9}));
+
+            LatticeColourMatrix z(&Grid); //random(pRNG,z);
+            LatticeColourMatrix x(&Grid); //random(pRNG,x);
+            LatticeColourMatrix y(&Grid); //random(pRNG,y);
+
+            double start=usecond();
+            for(int64_t i=0;i<Nloop;i++){
+      	mac_outer(z,x,y);
+            }
+            double stop=usecond();
+            double time = (stop-start)/Nloop*1000.0;
+
+            double bytes=3*vol*Nc*Nc*sizeof(Complex);
+            double flops=Nc*Nc*(8+8+8)*vol;
+            std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
+
+          }
+
 
   Grid_finalize();
 }
