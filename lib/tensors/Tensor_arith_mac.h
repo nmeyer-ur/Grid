@@ -249,6 +249,30 @@ strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iScala
     return;
 }
 
+template<class rrtype,class ltype,class rtype,int N>
+strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+    for(int c1=0;c1<N;c1++){
+    for(int c2=0;c2<N;c2++){
+        mac01_inner(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
+    }}
+    return;
+}
+template<class rrtype,class ltype,class rtype,int N>
+strong_inline void mac01_middle(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+    for(int c1=0;c1<N;c1++){
+    for(int c2=0;c2<N;c2++){
+        mac01_middle(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
+    }}
+    return;
+}
+template<class rrtype,class ltype,class rtype,int N>
+strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+    for(int c1=0;c1<N;c1++){
+    for(int c2=0;c2<N;c2++){
+        mac01_outer(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
+    }}
+    return;
+}
 
 
 template<class rrtype,class ltype,class rtype,int N>
