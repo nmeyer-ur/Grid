@@ -267,7 +267,7 @@ int main (int argc, char ** argv)
 
             double start=usecond();
             for(int64_t i=0;i<Nloop;i++){
-      	mac_outer(z,x,y);
+      	mac01_outer(z,x,y);
             }
             double stop=usecond();
             double time = (stop-start)/Nloop*1000.0;

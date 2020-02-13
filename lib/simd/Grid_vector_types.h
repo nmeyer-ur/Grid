@@ -238,14 +238,14 @@ class Grid_simd {
   friend inline void mac0(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    *y = (*a) * (*x) + (*y);
-    //y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
+    //*y = (*a) * (*x) + (*y);
+    y->v = Optimization::MultAddComplex::mac0(a->v, x->v, y->v);
   };
 
   friend inline void mac1(Grid_simd *__restrict__ y,
                          const Grid_simd *__restrict__ a,
                          const Grid_simd *__restrict__ x) {
-    //y->v = Optimization::MultAddComplex::mac1(a->v, x->v, y->v);
+    y->v = Optimization::MultAddComplex::mac1(a->v, x->v, y->v);
     return;
   };
 
