@@ -180,7 +180,7 @@ int main (int argc, char ** argv)
       std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
 
     }
-
+/*
     std::cout<<GridLogMessage << "Outer loop iterations = " << Nloop <<std::endl;
     std::cout<<GridLogMessage << "===================================================================================================="<<std::endl;
     std::cout<<GridLogMessage << "= Benchmarking SU3xSU3  mac01_inner(z,x,y)"<<std::endl;
@@ -277,7 +277,7 @@ int main (int argc, char ** argv)
             std::cout<<GridLogMessage<<std::setprecision(3) << lat<<"\t\t"<<bytes/(1024.*1024.)<<"   \t\t"<<bytes/time<<"\t\t" << flops/time<< "    XXX"<<std::endl;
 
           }
-
+*/
 
   Grid_finalize();
 }

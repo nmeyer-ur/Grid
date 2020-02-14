@@ -48,29 +48,16 @@ namespace Grid {
     // scal x vec  = vec
     ///////////////////////////
 
+
+
+// ------------------ mainline without mac0/1 ---------------------------
+
 template<class rtype,class vtype,class mtype>
 strong_inline  void mac(iScalar<rtype> * __restrict__ ret,const iScalar<vtype> * __restrict__ lhs,const iScalar<mtype> * __restrict__ rhs)
 {
     mac(&ret->_internal,&lhs->_internal,&rhs->_internal);
 }
 
-template<class rtype,class vtype,class mtype>
-strong_inline  void mac01_inner(iScalar<rtype> * __restrict__ ret,const iScalar<vtype> * __restrict__ lhs,const iScalar<mtype> * __restrict__ rhs)
-{
-    mac01_inner(&ret->_internal,&lhs->_internal,&rhs->_internal);
-}
-
-template<class rtype,class vtype,class mtype>
-strong_inline  void mac01_middle(iScalar<rtype> * __restrict__ ret,const iScalar<vtype> * __restrict__ lhs,const iScalar<mtype> * __restrict__ rhs)
-{
-    mac01_middle(&ret->_internal,&lhs->_internal,&rhs->_internal);
-}
-
-template<class rtype,class vtype,class mtype>
-strong_inline  void mac01_outer(iScalar<rtype> * __restrict__ ret,const iScalar<vtype> * __restrict__ lhs,const iScalar<mtype> * __restrict__ rhs)
-{
-    mac01_outer(&ret->_internal,&lhs->_internal,&rhs->_internal);
-}
 
 // --------- mat x mat -------------------------------------------
 /*
@@ -112,165 +99,6 @@ strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,
             }
         }
     }
-    return;
-}
-
-// ------------------ inner loop with mac0/1 ---------------------------
-
-// simd vector, complex
-template<class rrtype,class ltype,class rtype,int N,
-typename std::enable_if< is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value >::type * =nullptr >
-strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac0(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-            for(int c2=0;c2<N;c2++){
-                mac1(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    return;
-}
-
-// all other
-template<class rrtype,class ltype,class rtype,int N,
-typename std::enable_if< !(is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value) >::type * =nullptr >
-strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac01_inner(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    return;
-}
-
-// ------------------ middle loop with mac0/1 ---------------------------
-
-// simd vector, complex
-template<class rrtype,class ltype,class rtype,int N,
-typename std::enable_if< is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value >::type * =nullptr >
-strong_inline void mac01_middle(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac0(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac1(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    return;
-}
-
-// all other
-template<class rrtype,class ltype,class rtype,int N,
-typename std::enable_if< !(is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value) >::type * =nullptr >
-strong_inline void mac01_middle(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac01_middle(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    return;
-}
-
-// ------------------ outer loop with mac0/1 ---------------------------
-
-// simd vector, complex
-template<class rrtype,class ltype,class rtype,int N,
-typename std::enable_if< is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value >::type * =nullptr >
-strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac0(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac1(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    return;
-}
-
-// all other
-template<class rrtype,class ltype,class rtype,int N,
-typename std::enable_if< !(is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value) >::type * =nullptr >
-strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c3=0;c3<N;c3++){
-        for(int c1=0;c1<N;c1++){
-            for(int c2=0;c2<N;c2++){
-                mac01_outer(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
-            }
-        }
-    }
-    return;
-}
-
-
-
-template<class rrtype,class ltype,class rtype,int N>
-strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c1=0;c1<N;c1++){
-    for(int c2=0;c2<N;c2++){
-        mac01_inner(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
-    }}
-    return;
-}
-
-template<class rrtype,class ltype,class rtype,int N>
-strong_inline void mac01_middle(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c1=0;c1<N;c1++){
-    for(int c2=0;c2<N;c2++){
-        mac01_middle(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
-    }}
-    return;
-}
-
-template<class rrtype,class ltype,class rtype,int N>
-strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
-    for(int c1=0;c1<N;c1++){
-    for(int c2=0;c2<N;c2++){
-        mac01_outer(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
-    }}
-    return;
-}
-
-template<class rrtype,class ltype,class rtype,int N>
-strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iScalar<rtype> * __restrict__ rhs){
-    for(int c1=0;c1<N;c1++){
-    for(int c2=0;c2<N;c2++){
-        mac01_inner(&ret->_internal[c1][c2],&lhs->_internal[c1][c2],&rhs->_internal);
-    }}
-    return;
-}
-template<class rrtype,class ltype,class rtype,int N>
-strong_inline void mac01_middle(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iScalar<rtype> * __restrict__ rhs){
-    for(int c1=0;c1<N;c1++){
-    for(int c2=0;c2<N;c2++){
-        mac01_middle(&ret->_internal[c1][c2],&lhs->_internal[c1][c2],&rhs->_internal);
-    }}
-    return;
-}
-template<class rrtype,class ltype,class rtype,int N>
-strong_inline void mac01_outer(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iScalar<rtype> * __restrict__ rhs){
-    for(int c1=0;c1<N;c1++){
-    for(int c2=0;c2<N;c2++){
-        mac01_outer(&ret->_internal[c1][c2],&lhs->_internal[c1][c2],&rhs->_internal);
-    }}
     return;
 }
 
@@ -317,6 +145,108 @@ strong_inline void mac(iVector<rrtype,N> * __restrict__ ret,const iVector<ltype,
     }
     return;
 }
+
+// -----------------------end mainline------------------------------------
+
+
+// // ---------------------- mac0/1 inner loop : this crap does not work!!
+//
+// template<class rtype,class vtype,class mtype>
+// strong_inline  void mac01_inner(iScalar<rtype> * __restrict__ ret,const iScalar<vtype> * __restrict__ lhs,const iScalar<mtype> * __restrict__ rhs)
+// {
+//     mac(&ret->_internal,&lhs->_internal,&rhs->_internal);
+// }
+//
+//
+// // --------- mat x mat -------------------------------------------
+// /*
+// template<class rrtype,class ltype,class rtype,int N>
+// strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+//     for(int c3=0;c3<N;c3++){
+//     for(int c1=0;c1<N;c1++){
+//     for(int c2=0;c2<N;c2++){
+//         mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
+//     }}}
+//     return;
+// }
+// */
+//
+// // simd vector, complex
+// template<class rrtype,class ltype,class rtype,int N,
+// typename std::enable_if< is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value >::type * =nullptr >
+// strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+//     #pragma message("at inner loop")
+//     for(int c3=0;c3<N;c3++){
+//         for(int c1=0;c1<N;c1++){
+//             for(int c2=0;c2<N;c2++){
+//                 mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
+//             }
+//         }
+//     }
+//     return;
+// }
+//
+// // all other
+// template<class rrtype,class ltype,class rtype,int N,
+// typename std::enable_if< !(is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value) >::type * =nullptr >
+// strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+//     for(int c3=0;c3<N;c3++){
+//         for(int c1=0;c1<N;c1++){
+//             for(int c2=0;c2<N;c2++){
+//                 mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
+//             }
+//         }
+//     }
+//     return;
+// }
+//
+//
+//
+// template<class rrtype,class ltype,class rtype,int N>
+// strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iScalar<rtype> * __restrict__ rhs){
+//     for(int c1=0;c1<N;c1++){
+//     for(int c2=0;c2<N;c2++){
+//         mac(&ret->_internal[c1][c2],&lhs->_internal[c1][c2],&rhs->_internal);
+//     }}
+//     return;
+// }
+//
+//
+// template<class rrtype,class ltype,class rtype,int N>
+// strong_inline void mac01_inner(iMatrix<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
+//     for(int c1=0;c1<N;c1++){
+//     for(int c2=0;c2<N;c2++){
+//         mac(&ret->_internal[c1][c2],&lhs->_internal,&rhs->_internal[c1][c2]);
+//     }}
+//     return;
+// }
+// template<class rrtype,class ltype,class rtype,int N>
+// strong_inline void mac01_inner(iVector<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iVector<rtype,N> * __restrict__ rhs)
+// {
+//     for(int c1=0;c1<N;c1++){
+//     for(int c2=0;c2<N;c2++){
+//         mac(&ret->_internal[c1],&lhs->_internal[c1][c2],&rhs->_internal[c2]);
+//     }}
+//     return;
+// }
+// template<class rrtype,class ltype,class rtype,int N>
+// strong_inline void mac01_inner(iVector<rrtype,N> * __restrict__ ret,const iScalar<ltype> * __restrict__ lhs,const iVector<rtype,N> * __restrict__ rhs)
+// {
+//     for(int c1=0;c1<N;c1++){
+//         mac(&ret->_internal[c1],&lhs->_internal,&rhs->_internal[c1]);
+//     }
+//     return;
+// }
+// template<class rrtype,class ltype,class rtype,int N>
+// strong_inline void mac01_inner(iVector<rrtype,N> * __restrict__ ret,const iVector<ltype,N> * __restrict__ lhs,const iScalar<rtype> * __restrict__ rhs)
+// {
+//     for(int c1=0;c1<N;c1++){
+//         mac(&ret->_internal[c1],&lhs->_internal[c1],&rhs->_internal);
+//     }
+//     return;
+// }
+
+// ---------------------- end mac0/1 inner loop
 
 }
 
