@@ -83,6 +83,8 @@ strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,
             for(int c2=0;c2<N;c2++){
                 mac0(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
             }
+        }
+        for(int c1=0;c1<N;c1++){
             for(int c2=0;c2<N;c2++){
                 mac1(&ret->_internal[c1][c2],&lhs->_internal[c1][c3],&rhs->_internal[c3][c2]);
             }
