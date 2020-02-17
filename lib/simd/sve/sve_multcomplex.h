@@ -25,7 +25,7 @@
       typename acle<T>::vt z_v2 = __svzero(z_v2);
 
       z_v1 = svcmla_x(pg1, z_v1, a_v, b_v, 90);
-      z_v2 = svcmla_x(pg1, z_v2, a_v, b_v, 90);
+      z_v2 = svcmla_x(pg1, z_v2, a_v, b_v, 0);
       typename acle<T>::vt r_v = svadd_x(pg1, z_v1, z_v2);
 
       svst1(pg1, out.v, r_v);
