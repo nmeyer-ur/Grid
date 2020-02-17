@@ -75,6 +75,7 @@ strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,
 // ------------------ mainline ---------------------------
 
 // simd vector, complex
+/*
 template<class rrtype,class ltype,class rtype,int N,
 typename std::enable_if< is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value >::type * =nullptr >
 strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
@@ -94,8 +95,8 @@ strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,
     }
     return;
 }
+*/
 
-/*
 template<class rrtype,class ltype,class rtype,int N,
 typename std::enable_if< is_simd<typename GridTypeMapper<ltype>::vector_type>::value &&  is_simd<typename GridTypeMapper<rtype>::vector_type>::value  && is_complex<typename GridTypeMapper<ltype>::scalar_type>::value && is_complex<typename GridTypeMapper<rtype>::scalar_type>::value >::type * =nullptr >
 strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,N> * __restrict__ lhs,const iMatrix<rtype,N> * __restrict__ rhs){
@@ -108,7 +109,7 @@ strong_inline void mac(iMatrix<rrtype,N> * __restrict__ ret,const iMatrix<ltype,
     }
     return;
 }
-*/
+
 
 // all other
 template<class rrtype,class ltype,class rtype,int N,
