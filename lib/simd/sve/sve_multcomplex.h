@@ -13,7 +13,6 @@
       typename acle<T>::vt a_v = svld1(pg1, a.v);
       typename acle<T>::vt b_v = svld1(pg1, b.v);
       //typename acle<T>::vt z_v = acle<T>::zero();
-      typename acle<T>::vt z_v = __svzero(z_v);
 
       // using FCMLA
       // FIXME
@@ -22,10 +21,12 @@
       r_v = svcmla_x(pg1, r_v, a_v, b_v, 0);
       */
 
+      typename acle<T>::vt z_v1 = __svzero(z_v1);
       typename acle<T>::vt z_v2 = __svzero(z_v2);
-      z_v = svcmla_x(pg1, z_v, a_v, b_v, 90);
-      typename acle<T>::vt z_v2 = svcmla_x(pg1, z_v2, a_v, b_v, 90);
-      typename acle<T>::vt r_v = svadd_x(z_v, z_v2);
+
+      z_v1 = svcmla_x(pg1, z_v1, a_v, b_v, 90);
+      z_v2 = svcmla_x(pg1, z_v2, a_v, b_v, 90);
+      typename acle<T>::vt r_v = svadd_x(pg1, z_v1, z_v2);
 
       svst1(pg1, out.v, r_v);
 
@@ -57,12 +58,11 @@
       typename acle<T>::vt a_v = svld1(pg1, a.v);
       typename acle<T>::vt b_v = svld1(pg1, b.v);
       typename acle<T>::vt c_v = svld1(pg1, c.v);
-      typename acle<T>::vt z_v = __svzero(z_v);
 
       // using FCMLA
-      a_v = svcmla_x(pg1, c_v, a_v, b_v, 90);
-      z_v = svcmla_x(pg1, z_v, a_v, b_v, 0);
-      typename acle<T>::vt r_v = svadd_x(a_v, z_v);
+      typename acle<T>::vt z_v1 = svcmla_x(pg1, c_v, a_v, b_v, 90);
+      typename acle<T>::vt z_v2 = svcmla_x(pg1, c_v, a_v, b_v, 0);
+      typename acle<T>::vt r_v = svadd_x(pg1, z_v1, z_v2);
 
       svst1(pg1, out.v, r_v);
 
