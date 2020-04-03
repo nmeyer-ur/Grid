@@ -755,7 +755,7 @@ template <typename Out_type, typename In_type>
 struct Reduce{
   //Need templated class to overload output type
   //General form must generate error if compiled
-  inline Out_type operator()(const In_type &in){
+  inline Out_type operator()(In_type &in){
     printf("Error, using wrong Reduce function\n");
     exit(1);
     return 0;
