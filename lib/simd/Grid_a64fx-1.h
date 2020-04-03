@@ -51,8 +51,10 @@ namespace Optimization {
   typedef vec<uint16_t>  vech; // half precision comms
   typedef vec<Integer>   veci;
 
+}} // Grid::Optimization
 
-
+namespace Grid {
+namespace Optimization {
 
 template <typename T>
 struct acle{};
@@ -904,7 +906,7 @@ inline Integer Reduce<Integer, veci>::operator()(veci in){
 #undef acc  // EIGEN compatibility
 
 
-}
+} // Optimization
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Here assign types
