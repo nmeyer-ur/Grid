@@ -1,12 +1,46 @@
+    /*************************************************************************************
 
+    Grid physics library, www.github.com/paboyle/Grid
+
+    Source file: ./lib/simd/Grid_a64fx-1.h
+
+    Copyright (C) 2020
+
+Author: Nils Meyer          <nils.meyer@ur.de>
+
+    Copyright (C) 2015
+    Copyright (C) 2017
+
+Author: Antonin Portelli <antonin.portelli@me.com>
+        Andrew Lawson    <andrew.lawson1991@gmail.com>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+    See the full license in the file "LICENSE" in the top level distribution directory
+    *************************************************************************************/
+    /*  END LEGAL */
 
 /////////////////////////////////////////////////////
-// SVE ACLE
+// Using SVE ACLE
 /////////////////////////////////////////////////////
+
+static_assert(GEN_SIMD_WIDTH % 64u == 0, "A64FX SIMD vector size is 64 bytes");
 
 #ifdef __ARM_FEATURE_SVE
   #ifdef __clang__
-    #pragma message("Using clang compiler")
+    //#pragma message("Using clang compiler")
     #include <arm_sve.h>
   #endif
 #else
@@ -219,7 +253,7 @@ struct Vsplat{
       // svst1(pg1, (typename acle<T>::pt*)&D, a_v);
       svst1(pg1, D, a_v);
 
-      // non temporal version TO INTEGRATED
+      // non temporal version
       //svstnt1(pg1, D, a_v);
     }
   };
