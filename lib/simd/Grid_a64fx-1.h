@@ -12,6 +12,8 @@
   #pragma error "Missing SVE feature"
 #endif /* __ARM_FEATURE_SVE */
 
+#include "Grid_generic_types.h"
+
 namespace Grid {
 namespace Optimization {
 
