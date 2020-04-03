@@ -13,8 +13,6 @@
   #pragma error "Missing SVE feature"
 #endif /* __ARM_FEATURE_SVE */
 
-#include <arm_sve.h>
-
 namespace Grid {
 namespace Optimization {
 
@@ -53,6 +51,8 @@ namespace Optimization {
 
 }} // Grid::Optimization
 
+
+// low-level API
 namespace Grid {
 namespace Optimization {
 
@@ -392,7 +392,7 @@ struct Div{
 struct Conj{
   // Complex
   template <typename T>
-  inline vec<T> operator()(const vec<T> &a){
+  inline vec<T> operator()(vec<T> a){
 
     vec<T> out;
     svbool_t pg1 = acle<T>::pg1();
