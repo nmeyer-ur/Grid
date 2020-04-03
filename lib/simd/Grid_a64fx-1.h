@@ -20,11 +20,11 @@ namespace Optimization {
 
   // type traits giving the number of elements for each vector type
   template <typename T> struct W;
-  template <> struct W<float64_t> {
+  template <> struct W<double> {
     constexpr static unsigned int c = GEN_SIMD_WIDTH/16u;
     constexpr static unsigned int r = GEN_SIMD_WIDTH/8u;
   };
-  template <> struct W<float32_t> {
+  template <> struct W<float> {
     constexpr static unsigned int c = GEN_SIMD_WIDTH/8u;
     constexpr static unsigned int r = GEN_SIMD_WIDTH/4u;
   };
@@ -46,8 +46,8 @@ namespace Optimization {
     alignas(GEN_SIMD_WIDTH) T v[W<T>::r];
   };
 
-  typedef vec<float32_t>     vecf;
-  typedef vec<float64_t>    vecd;
+  typedef vec<float>     vecf;
+  typedef vec<double>    vecd;
   typedef vec<uint16_t>  vech; // half precision comms
   typedef vec<Integer>   veci;
 
@@ -58,7 +58,7 @@ template <typename T>
 struct acle{};
 
 template <>
-struct acle<float64_t>{
+struct acle<double>{
   typedef svfloat64_t vt;
   typedef svfloat64x2_t vt2;
   typedef svfloat64x4_t vt4;
@@ -87,7 +87,7 @@ struct acle<float64_t>{
 };
 
 template <>
-struct acle<float32_t>{
+struct acle<float>{
   typedef svfloat32_t vt;
   typedef svfloat32x2_t vt2;
   typedef float32_t pt;
