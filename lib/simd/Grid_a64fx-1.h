@@ -154,10 +154,10 @@ struct Vsplat{
   inline vecf operator()(vecf a, vecf b){
 
     vecf out;
-    svbool_t pg1 = acle<float32_t>::pg1();
-    typename acle<float32_t>::vt a_v = svdup_f32(a);
-    typename acle<float32_t>::vt b_v = svdup_f32(b);
-    typename acle<float32_t>::vt r_v = svzip1(a_v, b_v);
+    svbool_t pg1 = acle<float>::pg1();
+    typename acle<float>::vt a_v = svdup_f32(a);
+    typename acle<float>::vt b_v = svdup_f32(b);
+    typename acle<float>::vt r_v = svzip1(a_v, b_v);
     svst1(pg1, out.v, r_v);
     return out;
   }
@@ -166,8 +166,8 @@ struct Vsplat{
   inline vecf operator()(vecf a){
 
     vecf out;
-    svbool_t pg1 = acle<float32_t>::pg1();
-    typename acle<float32_t>::vt r_v = svdup_f32(a);
+    svbool_t pg1 = acle<float>::pg1();
+    typename acle<float>::vt r_v = svdup_f32(a);
     svst1(pg1, out.v, r_v);
     return out;
   }
@@ -176,10 +176,10 @@ struct Vsplat{
   inline vecd operator()(vecd a, vecd b){
 
     vecd out;
-    svbool_t pg1 = acle<float64_t>::pg1();
-    typename acle<float64_t>::vt a_v = svdup_f64(a);
-    typename acle<float64_t>::vt b_v = svdup_f64(b);
-    typename acle<float64_t>::vt r_v = svzip1(a_v, b_v);
+    svbool_t pg1 = acle<double>::pg1();
+    typename acle<double>::vt a_v = svdup_f64(a);
+    typename acle<double>::vt b_v = svdup_f64(b);
+    typename acle<double>::vt r_v = svzip1(a_v, b_v);
     svst1(pg1, out.v, r_v);
     return out;
   }
@@ -188,8 +188,8 @@ struct Vsplat{
   inline vecd operator()(vecd a){
 
     vecd out;
-    svbool_t pg1 = acle<float64_t>::pg1();
-    typename acle<float64_t>::vt r_v = svdup_f64(a);
+    svbool_t pg1 = acle<double>::pg1();
+    typename acle<double>::vt r_v = svdup_f64(a);
     svst1(pg1, out.v, r_v);
     return out;
   }
@@ -449,10 +449,10 @@ struct Conj{
       static inline vech StoH (const vecf &sa,const vecf &sb) {
 
         vech ret;
-        svbool_t pg1s = acle<float32_t>::pg1();
+        svbool_t pg1s = acle<float>::pg1();
         svbool_t pg1h = acle<uint16_t>::pg1();
-        typename acle<float32_t>::vt sa_v = svld1(pg1s, sa.v);
-        typename acle<float32_t>::vt sb_v = svld1(pg1s, sb.v);
+        typename acle<float>::vt sa_v = svld1(pg1s, sa.v);
+        typename acle<float>::vt sb_v = svld1(pg1s, sb.v);
         typename acle<uint16_t>::vt ha_v = svcvt_f16_x(pg1s, sa_v);
         typename acle<uint16_t>::vt hb_v = svcvt_f16_x(pg1s, sb_v);
         typename acle<uint16_t>::vt r_v = svuzp1(ha_v, hb_v);
@@ -462,49 +462,49 @@ struct Conj{
       static inline void HtoS(vech h,vecf &sa,vecf &sb) {
 
         svbool_t pg1h = acle<uint16_t>::pg1();
-        svbool_t pg1s = acle<float32_t>::pg1();
+        svbool_t pg1s = acle<float>::pg1();
         typename acle<uint16_t>::vt h_v = svld1(pg1h, (typename acle<uint16_t>::pt*)&h.v);
         typename acle<uint16_t>::vt ha_v = svzip1(h_v, h_v);
         typename acle<uint16_t>::vt hb_v = svzip2(h_v, h_v);
-        typename acle<float32_t>::vt sa_v = svcvt_f32_x(pg1s, ha_v);
-        typename acle<float32_t>::vt sb_v = svcvt_f32_x(pg1s, hb_v);
+        typename acle<float>::vt sa_v = svcvt_f32_x(pg1s, ha_v);
+        typename acle<float>::vt sb_v = svcvt_f32_x(pg1s, hb_v);
         svst1(pg1s, sa.v, sa_v);
         svst1(pg1s, sb.v, sb_v);
       }
       static inline vecf DtoS (vecd a,vecd b) {
 
         vecf ret;
-        svbool_t pg1d = acle<float64_t>::pg1();
-        svbool_t pg1s = acle<float32_t>::pg1();
-        typename acle<float64_t>::vt a_v = svld1(pg1d, a.v);
-        typename acle<float64_t>::vt b_v = svld1(pg1d, b.v);
-        typename acle<float32_t>::vt sa_v = svcvt_f32_x(pg1d, a_v);
-        typename acle<float32_t>::vt sb_v = svcvt_f32_x(pg1d, b_v);
-        typename acle<float32_t>::vt r_v = svuzp1(sa_v, sb_v);
+        svbool_t pg1d = acle<double>::pg1();
+        svbool_t pg1s = acle<float>::pg1();
+        typename acle<double>::vt a_v = svld1(pg1d, a.v);
+        typename acle<double>::vt b_v = svld1(pg1d, b.v);
+        typename acle<float>::vt sa_v = svcvt_f32_x(pg1d, a_v);
+        typename acle<float>::vt sb_v = svcvt_f32_x(pg1d, b_v);
+        typename acle<float>::vt r_v = svuzp1(sa_v, sb_v);
         svst1(pg1s, ret.v, r_v);
         return ret;
       }
       static inline void StoD (vecf s,vecd &a,vecd &b) {
 
-        svbool_t pg1s = acle<float32_t>::pg1();
-        svbool_t pg1d = acle<float64_t>::pg1();
-        typename acle<float32_t>::vt s_v = svld1(pg1s, s.v);
-        typename acle<float32_t>::vt sa_v = svzip1(s_v, s_v);
-        typename acle<float32_t>::vt sb_v = svzip2(s_v, s_v);
-        typename acle<float64_t>::vt a_v = svcvt_f64_x(pg1d, sa_v);
-        typename acle<float64_t>::vt b_v = svcvt_f64_x(pg1d, sb_v);
+        svbool_t pg1s = acle<float>::pg1();
+        svbool_t pg1d = acle<double>::pg1();
+        typename acle<float>::vt s_v = svld1(pg1s, s.v);
+        typename acle<float>::vt sa_v = svzip1(s_v, s_v);
+        typename acle<float>::vt sb_v = svzip2(s_v, s_v);
+        typename acle<double>::vt a_v = svcvt_f64_x(pg1d, sa_v);
+        typename acle<double>::vt b_v = svcvt_f64_x(pg1d, sb_v);
         svst1(pg1d, a.v, a_v);
         svst1(pg1d, b.v, b_v);
       }
       static inline vech DtoH (vecd a,vecd b,vecd c,vecd d) {
 
         vech ret;
-        svbool_t pg1d = acle<float64_t>::pg1();
+        svbool_t pg1d = acle<double>::pg1();
         svbool_t pg1h = acle<uint16_t>::pg1();
-        typename acle<float64_t>::vt a_v = svld1(pg1d, a.v);
-        typename acle<float64_t>::vt b_v = svld1(pg1d, b.v);
-        typename acle<float64_t>::vt c_v = svld1(pg1d, c.v);
-        typename acle<float64_t>::vt d_v = svld1(pg1d, d.v);
+        typename acle<double>::vt a_v = svld1(pg1d, a.v);
+        typename acle<double>::vt b_v = svld1(pg1d, b.v);
+        typename acle<double>::vt c_v = svld1(pg1d, c.v);
+        typename acle<double>::vt d_v = svld1(pg1d, d.v);
         typename acle<uint16_t>::vt ha_v = svcvt_f16_x(pg1d, a_v);
         typename acle<uint16_t>::vt hb_v = svcvt_f16_x(pg1d, b_v);
         typename acle<uint16_t>::vt hc_v = svcvt_f16_x(pg1d, c_v);
@@ -525,7 +525,7 @@ struct Conj{
       static inline void HtoD(vech h,vecd &a,vecd &b,vecd &c,vecd &d) {
 
         svbool_t pg1h = acle<uint16_t>::pg1();
-        svbool_t pg1d = acle<float64_t>::pg1();
+        svbool_t pg1d = acle<double>::pg1();
         typename acle<uint16_t>::vt h_v = svld1(pg1h, (typename acle<uint16_t>::pt*)&h.v);
         typename acle<uint16_t>::vt sa_v = svzip1(h_v, h_v);
         typename acle<uint16_t>::vt sb_v = svzip2(h_v, h_v);
@@ -533,10 +533,10 @@ struct Conj{
         typename acle<uint16_t>::vt db_v = svzip2(sa_v, sa_v);
         typename acle<uint16_t>::vt dc_v = svzip1(sb_v, sb_v);
         typename acle<uint16_t>::vt dd_v = svzip2(sb_v, sb_v);
-        typename acle<float64_t>::vt a_v = svcvt_f64_x(pg1d, da_v);
-        typename acle<float64_t>::vt b_v = svcvt_f64_x(pg1d, db_v);
-        typename acle<float64_t>::vt c_v = svcvt_f64_x(pg1d, dc_v);
-        typename acle<float64_t>::vt d_v = svcvt_f64_x(pg1d, dd_v);
+        typename acle<double>::vt a_v = svcvt_f64_x(pg1d, da_v);
+        typename acle<double>::vt b_v = svcvt_f64_x(pg1d, db_v);
+        typename acle<double>::vt c_v = svcvt_f64_x(pg1d, dc_v);
+        typename acle<double>::vt d_v = svcvt_f64_x(pg1d, dd_v);
         svst1(pg1d, a.v, a_v);
         svst1(pg1d, b.v, b_v);
         svst1(pg1d, c.v, c_v);
@@ -572,11 +572,11 @@ struct Conj{
     template <typename T>
     static inline void Exchange1(vec<T> &out1, vec<T> &out2, const vec<T> &in1, const vec<T> &in2){
 
-      svbool_t pg4 = acle<float64_t>::pg4();
-      typename acle<float64_t>::vt4 in1_v4 = svld4(pg4, (typename acle<float64_t>::pt*)in1.v);
-      typename acle<float64_t>::vt4 in2_v4 = svld4(pg4, (typename acle<float64_t>::pt*)in2.v);
-      typename acle<float64_t>::vt4 out1_v4;
-      typename acle<float64_t>::vt4 out2_v4;
+      svbool_t pg4 = acle<double>::pg4();
+      typename acle<double>::vt4 in1_v4 = svld4(pg4, (typename acle<double>::pt*)in1.v);
+      typename acle<double>::vt4 in2_v4 = svld4(pg4, (typename acle<double>::pt*)in2.v);
+      typename acle<double>::vt4 out1_v4;
+      typename acle<double>::vt4 out2_v4;
       out1_v4.v0 = in1_v4.v0;
       out1_v4.v1 = in1_v4.v1;
       out1_v4.v2 = in2_v4.v0;
@@ -585,29 +585,29 @@ struct Conj{
       out2_v4.v1 = in1_v4.v3;
       out2_v4.v2 = in2_v4.v2;
       out2_v4.v3 = in2_v4.v3;
-      svst4(pg4, (typename acle<float64_t>::pt*)out1.v, out1_v4);
-      svst4(pg4, (typename acle<float64_t>::pt*)out2.v, out2_v4);
+      svst4(pg4, (typename acle<double>::pt*)out1.v, out1_v4);
+      svst4(pg4, (typename acle<double>::pt*)out2.v, out2_v4);
     };
 
     template <typename T>
     static inline void Exchange2(vec<T> &out1, vec<T> &out2, const vec<T> &in1, const vec<T> &in2){
 
-      svbool_t pg1 = acle<float64_t>::pg1();
-      typename acle<float64_t>::vt a1_v = svld1(pg1, (typename acle<float64_t>::pt*)in1.v);
-      typename acle<float64_t>::vt a2_v = svld1(pg1, (typename acle<float64_t>::pt*)in2.v);
-      typename acle<float64_t>::vt r1_v = svtrn1(a1_v, a2_v);
-      typename acle<float64_t>::vt r2_v = svtrn2(a1_v, a2_v);
-      svst1(pg1, (typename acle<float64_t>::pt*)out1.v, r1_v);
-      svst1(pg1, (typename acle<float64_t>::pt*)out2.v, r2_v);
+      svbool_t pg1 = acle<double>::pg1();
+      typename acle<double>::vt a1_v = svld1(pg1, (typename acle<double>::pt*)in1.v);
+      typename acle<double>::vt a2_v = svld1(pg1, (typename acle<double>::pt*)in2.v);
+      typename acle<double>::vt r1_v = svtrn1(a1_v, a2_v);
+      typename acle<double>::vt r2_v = svtrn2(a1_v, a2_v);
+      svst1(pg1, (typename acle<double>::pt*)out1.v, r1_v);
+      svst1(pg1, (typename acle<double>::pt*)out2.v, r2_v);
     };
 
     static inline void Exchange3(vecf &out1, vecf &out2, const vecf &in1, const vecf &in2){
 
-      svbool_t pg1 = acle<float32_t>::pg1();
-      typename acle<float32_t>::vt a1_v = svld1(pg1, in1.v);
-      typename acle<float32_t>::vt a2_v = svld1(pg1, in2.v);
-      typename acle<float32_t>::vt r1_v = svtrn1(a1_v, a2_v);
-      typename acle<float32_t>::vt r2_v = svtrn2(a1_v, a2_v);
+      svbool_t pg1 = acle<float>::pg1();
+      typename acle<float>::vt a1_v = svld1(pg1, in1.v);
+      typename acle<float>::vt a2_v = svld1(pg1, in2.v);
+      typename acle<float>::vt r1_v = svtrn1(a1_v, a2_v);
+      typename acle<float>::vt r2_v = svtrn2(a1_v, a2_v);
       svst1(pg1, out1.v, r1_v);
       svst1(pg1, out2.v, r2_v);
     };
@@ -635,11 +635,11 @@ struct Permute{
   static inline vecd Permute1(vecd in) {
 
     vecd out;
-    const vec<typename acle<float64_t>::uint> tbl_swap = acle<float64_t>::tbl1();
-    svbool_t pg1 = acle<float64_t>::pg1();
-    typename acle<float64_t>::vt a_v = svld1(pg1, in.v);
-    typename acle<float64_t>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
-    typename acle<float64_t>::vt r_v = svtbl(a_v, tbl_swap_v);
+    const vec<typename acle<double>::uint> tbl_swap = acle<double>::tbl1();
+    svbool_t pg1 = acle<double>::pg1();
+    typename acle<double>::vt a_v = svld1(pg1, in.v);
+    typename acle<double>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+    typename acle<double>::vt r_v = svtbl(a_v, tbl_swap_v);
     svst1(pg1, out.v, r_v);
 
     return out;
@@ -648,11 +648,11 @@ struct Permute{
   static inline vecf Permute1(vecf in) {
 
     vecf out;
-    const vec<typename acle<float32_t>::uint> tbl_swap = acle<float32_t>::tbl1();
-    svbool_t pg1 = acle<float32_t>::pg1();
-    typename acle<float32_t>::vt a_v = svld1(pg1, in.v);
-    typename acle<float32_t>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
-    typename acle<float32_t>::vt r_v = svtbl(a_v, tbl_swap_v);
+    const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl1();
+    svbool_t pg1 = acle<float>::pg1();
+    typename acle<float>::vt a_v = svld1(pg1, in.v);
+    typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+    typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
     svst1(pg1, out.v, r_v);
 
     return out;
@@ -661,11 +661,11 @@ struct Permute{
   static inline vecd Permute2(vecd in) {
 
     vecd out;
-    const vec<typename acle<float64_t>::uint> tbl_swap = acle<float64_t>::tbl_swap();
-    svbool_t pg1 = acle<float64_t>::pg1();
-    typename acle<float64_t>::vt a_v = svld1(pg1, in.v);
-    typename acle<float64_t>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
-    typename acle<float64_t>::vt r_v = svtbl(a_v, tbl_swap_v);
+    const vec<typename acle<double>::uint> tbl_swap = acle<double>::tbl_swap();
+    svbool_t pg1 = acle<double>::pg1();
+    typename acle<double>::vt a_v = svld1(pg1, in.v);
+    typename acle<double>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+    typename acle<double>::vt r_v = svtbl(a_v, tbl_swap_v);
     svst1(pg1, out.v, r_v);
 
     return out;
@@ -674,11 +674,11 @@ struct Permute{
   static inline vecf Permute2(vecf in) {
 
     vecf out;
-    const vec<typename acle<float32_t>::uint> tbl_swap = acle<float32_t>::tbl2();
-    svbool_t pg1 = acle<float32_t>::pg1();
-    typename acle<float32_t>::vt a_v = svld1(pg1, in.v);
-    typename acle<float32_t>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
-    typename acle<float32_t>::vt r_v = svtbl(a_v, tbl_swap_v);
+    const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl2();
+    svbool_t pg1 = acle<float>::pg1();
+    typename acle<float>::vt a_v = svld1(pg1, in.v);
+    typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+    typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
     svst1(pg1, out.v, r_v);
 
     return out;
@@ -687,11 +687,11 @@ struct Permute{
   static inline vecf Permute3(vecf in) {
 
     vecf out;
-    const vec<typename acle<float32_t>::uint> tbl_swap = acle<float32_t>::tbl_swap();
-    svbool_t pg1 = acle<float32_t>::pg1();
-    typename acle<float32_t>::vt a_v = svld1(pg1, in.v);
-    typename acle<float32_t>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
-    typename acle<float32_t>::vt r_v = svtbl(a_v, tbl_swap_v);
+    const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl_swap();
+    svbool_t pg1 = acle<float>::pg1();
+    typename acle<float>::vt a_v = svld1(pg1, in.v);
+    typename acle<float>::svuint tbl_swap_v = svld1(pg1, tbl_swap.v);
+    typename acle<float>::vt r_v = svtbl(a_v, tbl_swap_v);
     svst1(pg1, out.v, r_v);
 
     return out;
@@ -766,20 +766,20 @@ struct Reduce{
 template <>
 inline Grid::ComplexF Reduce<Grid::ComplexF, vecf>::operator()(vecf in){
 
-  svbool_t pg1 = acle<float32_t>::pg1();
-  svbool_t pg_even = acle<float32_t>::pg_even();
-  svbool_t pg_odd  = acle<float32_t>::pg_odd();
-  typename acle<float32_t>::vt a_v = svld1(pg1, in.v);
+  svbool_t pg1 = acle<float>::pg1();
+  svbool_t pg_even = acle<float>::pg_even();
+  svbool_t pg_odd  = acle<float>::pg_odd();
+  typename acle<float>::vt a_v = svld1(pg1, in.v);
   float a = svred(pg_even, a_v);
   float b = svred(pg_odd, a_v);
 
   return Grid::ComplexF(a, b);
 
 /* LD2: tested, working
-  svbool_t pg2 = acle<float32_t>::pg2();
-  typename acle<float32_t>::vt2 a_v = svld2(pg2, in.v);
-  typename acle<float32_t>::pt a = (typename acle<float32_t>::pt)svred(pg2, a_v.v0);
-  typename acle<float32_t>::pt b = (typename acle<float32_t>::pt)svred(pg2, a_v.v1);
+  svbool_t pg2 = acle<float>::pg2();
+  typename acle<float>::vt2 a_v = svld2(pg2, in.v);
+  typename acle<float>::pt a = (typename acle<float>::pt)svred(pg2, a_v.v0);
+  typename acle<float>::pt b = (typename acle<float>::pt)svred(pg2, a_v.v1);
 
   return Grid::ComplexF(a, b);
 */
@@ -789,8 +789,8 @@ inline Grid::ComplexF Reduce<Grid::ComplexF, vecf>::operator()(vecf in){
 template <>
 inline Grid::RealF Reduce<Grid::RealF, vecf>::operator()(vecf in){
 
-  svbool_t pg1 = acle<float32_t>::pg1();
-  typename acle<float32_t>::vt a_v = svld1(pg1, in.v);
+  svbool_t pg1 = acle<float>::pg1();
+  typename acle<float>::vt a_v = svld1(pg1, in.v);
   float a = svred(pg1, a_v);
 
   return a;
@@ -800,20 +800,20 @@ inline Grid::RealF Reduce<Grid::RealF, vecf>::operator()(vecf in){
 template <>
 inline Grid::ComplexD Reduce<Grid::ComplexD, vecd>::operator()(vecd in){
 
-  svbool_t pg1 = acle<float64_t>::pg1();
-  svbool_t pg_even = acle<float64_t>::pg_even();
-  svbool_t pg_odd  = acle<float64_t>::pg_odd();
-  typename acle<float64_t>::vt a_v = svld1(pg1, in.v);
+  svbool_t pg1 = acle<double>::pg1();
+  svbool_t pg_even = acle<double>::pg_even();
+  svbool_t pg_odd  = acle<double>::pg_odd();
+  typename acle<double>::vt a_v = svld1(pg1, in.v);
   double a = svred(pg_even, a_v);
   double b = svred(pg_odd, a_v);
 
   return Grid::ComplexD(a, b);
 
 /* LD2: tested, working
-  svbool_t pg2 = acle<float64_t>::pg2();
-  typename acle<float64_t>::vt2 a_v = svld2(pg2, in.v);
-  typename acle<float64_t>::pt a = (typename acle<float64_t>::pt)svred(pg2, a_v.v0);
-  typename acle<float64_t>::pt b = (typename acle<float64_t>::pt)svred(pg2, a_v.v1);
+  svbool_t pg2 = acle<double>::pg2();
+  typename acle<double>::vt2 a_v = svld2(pg2, in.v);
+  typename acle<double>::pt a = (typename acle<double>::pt)svred(pg2, a_v.v0);
+  typename acle<double>::pt b = (typename acle<double>::pt)svred(pg2, a_v.v1);
 
   return Grid::ComplexD(a, b);
 */
@@ -823,8 +823,8 @@ inline Grid::ComplexD Reduce<Grid::ComplexD, vecd>::operator()(vecd in){
 template <>
 inline Grid::RealD Reduce<Grid::RealD, vecd>::operator()(vecd in){
 
-  svbool_t pg1 = acle<float64_t>::pg1();
-  typename acle<float64_t>::vt a_v = svld1(pg1, in.v);
+  svbool_t pg1 = acle<double>::pg1();
+  typename acle<double>::vt a_v = svld1(pg1, in.v);
   double a = svred(pg1, a_v);
 
   return a;
