@@ -703,7 +703,7 @@ struct Permute{
     return in;
   }
 
-
+};
 
 struct Rotate{
 
