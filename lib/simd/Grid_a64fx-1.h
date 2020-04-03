@@ -281,7 +281,7 @@ struct Vsplat{
 
       return out;
     }
-
+  };
 
   struct Sub{
     template <typename T>
