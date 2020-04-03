@@ -6,16 +6,49 @@
 
 #ifdef __ARM_FEATURE_SVE
   #ifdef __clang__
+    #pragme message("Using clang compiler")
     #include <arm_sve.h>
   #endif
 #else
   #pragma error "Missing SVE feature"
 #endif /* __ARM_FEATURE_SVE */
 
-#include "Grid_generic_types.h"
+#include <arm_sve.h>
 
 namespace Grid {
 namespace Optimization {
+
+  // type traits giving the number of elements for each vector type
+  template <typename T> struct W;
+  template <> struct W<float64_t> {
+    constexpr static unsigned int c = GEN_SIMD_WIDTH/16u;
+    constexpr static unsigned int r = GEN_SIMD_WIDTH/8u;
+  };
+  template <> struct W<float32_t> {
+    constexpr static unsigned int c = GEN_SIMD_WIDTH/8u;
+    constexpr static unsigned int r = GEN_SIMD_WIDTH/4u;
+  };
+  template <> struct W<Integer> {
+    constexpr static unsigned int r = GEN_SIMD_WIDTH/4u;
+  };
+  template <> struct W<uint16_t> {
+    constexpr static unsigned int c = GEN_SIMD_WIDTH/4u;
+    constexpr static unsigned int r = GEN_SIMD_WIDTH/2u;
+  };
+
+  // SIMD vector types
+  template <typename T>
+  struct vec {
+    alignas(GEN_SIMD_WIDTH) T v[W<T>::r];
+  };
+
+  typedef vec<float32_t>     vecf;
+  typedef vec<float64_t>    vecd;
+  typedef vec<uint16_t>  vech; // half precision comms
+  typedef vec<Integer>   veci;
+
+
+
 
 template <typename T>
 struct acle{};
@@ -114,9 +147,9 @@ struct acle<Integer>{
 
 struct Vsplat{
   // Complex float
-  inline vec<float> operator()(vec<float> a, vec<float> b){
+  inline vecf operator()(vecf a, vecf b){
 
-    vec<float> out;
+    vecf out;
     svbool_t pg1 = acle<float>::pg1();
     typename acle<float>::vt a_v = svdup_f32(a);
     typename acle<float>::vt b_v = svdup_f32(b);
@@ -126,9 +159,9 @@ struct Vsplat{
   }
 
   // Real float
-  inline vec<float> operator()(vec<float> a){
+  inline vecf operator()(vecf a){
 
-    vec<float> out;
+    vecf out;
     svbool_t pg1 = acle<float>::pg1();
     typename acle<float>::vt r_v = svdup_f32(a);
     svst1(pg1, out.v, r_v);
@@ -136,9 +169,9 @@ struct Vsplat{
   }
 
  // Complex double
-  inline vec<double> operator()(vec<double> a, vec<double> b){
+  inline vecd operator()(vecd a, vecd b){
 
-    vec<double> out;
+    vecd out;
     svbool_t pg1 = acle<double>::pg1();
     typename acle<double>::vt a_v = svdup_f64(a);
     typename acle<double>::vt b_v = svdup_f64(b);
@@ -148,9 +181,9 @@ struct Vsplat{
   }
 
   // Real double
-  inline vec<double> operator()(vec<double> a){
+  inline vecd operator()(vecd a){
 
-    vec<double> out;
+    vecd out;
     svbool_t pg1 = acle<double>::pg1();
     typename acle<double>::vt r_v = svdup_f64(a);
     svst1(pg1, out.v, r_v);
@@ -564,7 +597,7 @@ struct Conj{
       svst1(pg1, (typename acle<double>::pt*)out2.v, r2_v);
     };
 
-    static inline void Exchange3(vec<float> &out1, vec<float> &out2, const vec<float> &in1, const vec<float> &in2){
+    static inline void Exchange3(vecf &out1, vecf &out2, const vecf &in1, const vecf &in2){
 
       svbool_t pg1 = acle<float>::pg1();
       typename acle<float>::vt a1_v = svld1(pg1, in1.v);
@@ -575,7 +608,7 @@ struct Conj{
       svst1(pg1, out2.v, r2_v);
     };
 
-    static inline void Exchange3(vec<double> &out1, vec<double> &out2, const vec<double> &in1, const vec<double> &in2){
+    static inline void Exchange3(vecd &out1, vecd &out2, const vecd &in1, const vecd &in2){
       assert(0);
       return;
     };
@@ -595,9 +628,9 @@ struct Permute{
     return out;
   }
 
-  static inline vec<double> Permute1(vec<double> in) {
+  static inline vecd Permute1(vecd in) {
 
-    vec<double> out;
+    vecd out;
     const vec<typename acle<double>::uint> tbl_swap = acle<double>::tbl1();
     svbool_t pg1 = acle<double>::pg1();
     typename acle<double>::vt a_v = svld1(pg1, in.v);
@@ -608,9 +641,9 @@ struct Permute{
     return out;
   }
 
-  static inline vec<float> Permute1(vec<float> in) {
+  static inline vecf Permute1(vecf in) {
 
-    vec<float> out;
+    vecf out;
     const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl1();
     svbool_t pg1 = acle<float>::pg1();
     typename acle<float>::vt a_v = svld1(pg1, in.v);
@@ -621,9 +654,9 @@ struct Permute{
     return out;
   }
 
-  static inline vec<double> Permute2(vec<double> in) {
+  static inline vecd Permute2(vecd in) {
 
-    vec<double> out;
+    vecd out;
     const vec<typename acle<double>::uint> tbl_swap = acle<double>::tbl_swap();
     svbool_t pg1 = acle<double>::pg1();
     typename acle<double>::vt a_v = svld1(pg1, in.v);
@@ -634,9 +667,9 @@ struct Permute{
     return out;
   }
 
-  static inline vec<float> Permute2(vec<float> in) {
+  static inline vecf Permute2(vecf in) {
 
-    vec<float> out;
+    vecf out;
     const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl2();
     svbool_t pg1 = acle<float>::pg1();
     typename acle<float>::vt a_v = svld1(pg1, in.v);
@@ -647,9 +680,9 @@ struct Permute{
     return out;
   }
 
-  static inline vec<float> Permute3(vec<float> in) {
+  static inline vecf Permute3(vecf in) {
 
-    vec<float> out;
+    vecf out;
     const vec<typename acle<float>::uint> tbl_swap = acle<float>::tbl_swap();
     svbool_t pg1 = acle<float>::pg1();
     typename acle<float>::vt a_v = svld1(pg1, in.v);
@@ -660,7 +693,7 @@ struct Permute{
     return out;
   }
 
-  static inline vec<double> Permute3(vec<double> in) {
+  static inline vecd Permute3(vecd in) {
     return in;
   }
 
