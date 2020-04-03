@@ -151,7 +151,7 @@ struct acle<Integer>{
 
 struct Vsplat{
   // Complex float
-  inline vecf operator()(vecf a, vecf b){
+  inline vecf operator()(float a, float b){
 
     vecf out;
     svbool_t pg1 = acle<float>::pg1();
@@ -163,7 +163,7 @@ struct Vsplat{
   }
 
   // Real float
-  inline vecf operator()(vecf a){
+  inline vecf operator()(float a){
 
     vecf out;
     svbool_t pg1 = acle<float>::pg1();
@@ -173,7 +173,7 @@ struct Vsplat{
   }
 
  // Complex double
-  inline vecd operator()(vecd a, vecd b){
+  inline vecd operator()(double a, double b){
 
     vecd out;
     svbool_t pg1 = acle<double>::pg1();
@@ -185,7 +185,7 @@ struct Vsplat{
   }
 
   // Real double
-  inline vecd operator()(vecd a){
+  inline vecd operator()(double a){
 
     vecd out;
     svbool_t pg1 = acle<double>::pg1();
@@ -195,7 +195,7 @@ struct Vsplat{
   }
 
   // Integer
-  inline vec<Integer> operator()(vec<Integer> a){
+  inline vec<Integer> operator()(Integer a){
 
     vec<Integer> out;
     svbool_t pg1 = acle<Integer>::pg1();
