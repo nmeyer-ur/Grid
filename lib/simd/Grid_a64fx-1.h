@@ -742,6 +742,8 @@ struct Rotate{
   }
 };
 
+// =======================================================================
+/* SVE ACLE reducedoes not compile, check later
 
 // tree-based reduction
 #define svred(pg, v)\
@@ -775,14 +777,6 @@ inline Grid::ComplexF Reduce<Grid::ComplexF, vecf>::operator()(vecf in){
 
   return Grid::ComplexF(a, b);
 
-/* LD2: tested, working
-  svbool_t pg2 = acle<float>::pg2();
-  typename acle<float>::vt2 a_v = svld2(pg2, in.v);
-  typename acle<float>::pt a = (typename acle<float>::pt)svred(pg2, a_v.v0);
-  typename acle<float>::pt b = (typename acle<float>::pt)svred(pg2, a_v.v1);
-
-  return Grid::ComplexF(a, b);
-*/
 }
 
 //Real float Reduce
@@ -808,15 +802,6 @@ inline Grid::ComplexD Reduce<Grid::ComplexD, vecd>::operator()(vecd in){
   double b = svred(pg_odd, a_v);
 
   return Grid::ComplexD(a, b);
-
-/* LD2: tested, working
-  svbool_t pg2 = acle<double>::pg2();
-  typename acle<double>::vt2 a_v = svld2(pg2, in.v);
-  typename acle<double>::pt a = (typename acle<double>::pt)svred(pg2, a_v.v0);
-  typename acle<double>::pt b = (typename acle<double>::pt)svred(pg2, a_v.v1);
-
-  return Grid::ComplexD(a, b);
-*/
 }
 
 //Real double Reduce
@@ -842,6 +827,82 @@ inline Integer Reduce<Integer, veci>::operator()(veci in){
 }
 
 #undef svred
+*/
+
+// =======================================================================
+
+
+#define acc(v, a, off, step, n)\
+for (unsigned int i = off; i < n; i += step)\
+{\
+  a += v[i];\
+}
+
+template <typename Out_type, typename In_type>
+struct Reduce{
+  //Need templated class to overload output type
+  //General form must generate error if compiled
+  inline Out_type operator()(In_type in){
+    printf("Error, using wrong Reduce function\n");
+    exit(1);
+    return 0;
+  }
+};
+
+//Complex float Reduce
+template <>
+inline Grid::ComplexF Reduce<Grid::ComplexF, vecf>::operator()(vecf in){
+  float a = 0.f, b = 0.f;
+
+  acc(in.v, a, 0, 2, W<float>::r);
+  acc(in.v, b, 1, 2, W<float>::r);
+
+  return Grid::ComplexF(a, b);
+}
+
+//Real float Reduce
+template<>
+inline Grid::RealF Reduce<Grid::RealF, vecf>::operator()(vecf in){
+  float a = 0.;
+
+  acc(in.v, a, 0, 1, W<float>::r);
+
+  return a;
+}
+
+//Complex double Reduce
+template<>
+inline Grid::ComplexD Reduce<Grid::ComplexD, vecd>::operator()(vecd in){
+  double a = 0., b = 0.;
+
+  acc(in.v, a, 0, 2, W<double>::r);
+  acc(in.v, b, 1, 2, W<double>::r);
+
+  return Grid::ComplexD(a, b);
+}
+
+//Real double Reduce
+template<>
+inline Grid::RealD Reduce<Grid::RealD, vecd>::operator()(vecd in){
+  double a = 0.f;
+
+  acc(in.v, a, 0, 1, W<double>::r);
+
+  return a;
+}
+
+//Integer Reduce
+template<>
+inline Integer Reduce<Integer, veci>::operator()(veci in){
+  Integer a = 0;
+
+  acc(in.v, a, 0, 1, W<Integer>::r);
+
+  return a;
+}
+
+#undef acc  // EIGEN compatibility
+
 
 }
 
