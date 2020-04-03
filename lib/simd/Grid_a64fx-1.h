@@ -6,7 +6,7 @@
 
 #ifdef __ARM_FEATURE_SVE
   #ifdef __clang__
-    #pragme message("Using clang compiler")
+    #pragma message("Using clang compiler")
     #include <arm_sve.h>
   #endif
 #else
