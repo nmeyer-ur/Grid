@@ -5,6 +5,12 @@ module load mpi/openmpi-aarch64
 
 ../configure --enable-simd=A64FX --enable-comms=mpi3 --enable-shm=shmget CXX=mpicxx CC=mpicc
 
+* armclang 20.2 (older Grid version /scratch/men04359/armclang-test/Grid ; latest Grid has performance penalty)
+
+source ~/settings-armclang.sh
+module load mpi/openmpi-aarch64
+
+../configure --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double --enable-sh=shmget --enable-comms=mpi3 --enable-openmp CXX=mpicxx CC=mpicc CXXFLAGS="-std=c++11 -mcpu=a64fx -DA64FX -DA64FXASM -DDSLASHINTRIN -lrt" LD_FLAGS="-lrt"
 
 ================================== deprecated ================================================
 
