@@ -136,6 +136,7 @@ accelerator_inline Grid_half sfw_float_to_half(float ff) {
   #endif
 #endif
 
+#ifndef GEN
 #ifdef A64FX
   #include <arm_sve.h>
   #ifdef __ARM_FEATURE_SVE_BITS
@@ -148,6 +149,7 @@ accelerator_inline Grid_half sfw_float_to_half(float ff) {
     #endif
     #include "Grid_a64fx-2.h"
   #endif
+#endif
 #endif
 
 /*

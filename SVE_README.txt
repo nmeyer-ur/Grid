@@ -1,4 +1,6 @@
-* gcc 10.1 prebuild, QPACE4 interactive login w/ MPI
+--- QPACE4 ---
+
+* gcc 10.x prebuild, QPACE4 interactive login w/ MPI
 
 scl enable gcc-toolset-10 bash
 module load mpi/openmpi-aarch64
@@ -11,6 +13,23 @@ source ~/settings-armclang.sh
 module load mpi/openmpi-aarch64
 
 ../configure --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double --enable-sh=shmget --enable-comms=mpi3 --enable-openmp CXX=mpicxx CC=mpicc CXXFLAGS="-std=c++11 -mcpu=a64fx -DA64FX -DA64FXASM -DDSLASHINTRIN -lrt" LD_FLAGS="-lrt"
+
+
+--- FJT cluster ---
+
+* gcc 10.x (w/ MPI)
+
+source ~/settings-fcc.sh
+source ~/settings-gcc.sh
+
+../Grid/configure --enable-simd=A64FX --enable-comms=mpi3 --enable-shm=shmget --without-hdf5 CXX=mpiFCC CC=mpifcc CXXFLAGS="-DTOFU -I/opt/FJSVxtclanga/tcsds-1.2.26/include/mpi/fujitsu -lrt" LDFLAGS="-L/opt/FJSVxtclanga/tcsds-1.2.26/lib64"
+
+* fcc (w/ MPI)
+
+../Grid/configure --enable-shm=shmget --without-hdf5 --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double --enable-comms=mpi3 --enable-openmp --with-mpfr=/home/users/gre/gre-1/grid-a64fx/mpfr-build/install CXX=mpiFCC CC=mpifcc CXXFLAGS="-Nclang -Kfast -DA64FX -DDSLASHINTRIN -DTOFU"
+
+
+
 
 ================================== deprecated ================================================
 
