@@ -110,12 +110,12 @@ accelerator_inline Grid_half sfw_float_to_half(float ff) {
 #ifdef GPU_VEC
 #include "Grid_gpu_vec.h"
 #endif
-/*
+
 #ifdef GEN
 #include "Grid_generic.h"
 #endif
-*/
 
+/*
 #ifdef GEN
   #if defined(A64FX) || defined(A64FXFIXEDSIZE) // breakout A64FX SVE ACLE here
     #include <arm_sve.h>
@@ -135,21 +135,20 @@ accelerator_inline Grid_half sfw_float_to_half(float ff) {
     #include "Grid_generic.h"
   #endif
 #endif
+*/
 
-#ifndef GEN
 #ifdef A64FX
   #include <arm_sve.h>
-  #ifdef __ARM_FEATURE_SVE_BITS
+  #ifdef __ARM_FEATURE_SVE_BITS  // VLS
     //#pragma message("building A64FX SVE VLS")
     #include "Grid_a64fx-fixedsize.h"
-  #else
+  #else  // VLA
     #pragma message("building A64FX SVE VLA")
     #if defined(ARMCLANGCOMPAT)
       #pragma message("applying data types patch")
     #endif
     #include "Grid_a64fx-2.h"
   #endif
-#endif
 #endif
 
 /*
