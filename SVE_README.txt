@@ -26,7 +26,9 @@ source ~/settings-gcc.sh
 
 * fcc (w/ MPI)
 
-../Grid/configure --enable-shm=shmget --without-hdf5 --enable-gen-simd-width=64 --enable-simd=GEN --enable-precision=double --enable-comms=mpi3 --enable-openmp --with-mpfr=/home/users/gre/gre-1/grid-a64fx/mpfr-build/install CXX=mpiFCC CC=mpifcc CXXFLAGS="-Nclang -Kfast -DA64FX -DDSLASHINTRIN -DTOFU"
+source ~/settings-fcc.sh
+
+../Grid/configure --enable-shm=shmget --without-hdf5 --enable-simd=A64FX --enable-precision=double --enable-comms=mpi3 --enable-openmp --with-mpfr=/home/users/gre/gre-1/grid-a64fx/mpfr-build/install CXX=mpiFCC CC=mpifcc CXXFLAGS="-Nclang -Kfast -DDSLASHINTRIN -DTOFU"
 
 
 
