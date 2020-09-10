@@ -43,6 +43,7 @@ Author: Nils Meyer <nils.meyer@ur.de>
 #define MULT_2SPIN_2                   MULT_2SPIN_2_A64FXf  
 #define LOAD_CHI(base)                 LOAD_CHI_A64FXf(base)  
 #define ADD_RESULT(base,basep)         LOAD_CHIMU(base); ADD_RESULT_INTERNAL_A64FXf; RESULT_A64FXf(base)  
+#define ZERO_PSI                       ZERO_PSI_A64FXf
 #define XP_PROJ                        XP_PROJ_A64FXf  
 #define YP_PROJ                        YP_PROJ_A64FXf  
 #define ZP_PROJ                        ZP_PROJ_A64FXf  
