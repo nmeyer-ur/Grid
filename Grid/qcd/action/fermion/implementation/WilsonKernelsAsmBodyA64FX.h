@@ -105,9 +105,9 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
     PREFETCH_CHIMU_L2(basep);                               \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
-    if (s == 0) {                                           \
-      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }                                                       \
+    /* if (s == 0) { */                                          \
+    /*   if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } */ \
+    /* } */                                                      \
     RECON;								                    \
 
 #define ASM_LEG_XP(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)	    \
@@ -138,9 +138,9 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
     PREFETCH_CHIMU(base);                                   \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
-    if (s == 0) {                                           \
-       if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }                                                       \
+    /* if (s == 0) { */                                          \
+    /*   if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } */ \
+    /* } */                                                      \
     RECON;								                    \
     PREFETCH_CHIMU_L2(basep);                               \
       } else { PREFETCH_CHIMU(base); }								                    \
@@ -164,28 +164,29 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
   if((!local)&&(!st.same_node[Dir]) ) {					    \
     LOAD_CHI(base);							                \
     MULT_2SPIN_1(Dir);					                    \
-    PREFETCH_CHIMU(base);                                   \
+    /* PREFETCH_CHIMU(base); */                                  \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
-    if (s == 0) {                                           \
-      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }                                                       \
+    /* if (s == 0) { */                                          \
+    /*  if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } */ \
+    /* } */                                                      \
     RECON;								                    \
     nmu++;								                    \
   }
 
 #define ASM_LEG_XP(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)	    \
   nmu=0;								                    \
+  { ZERO_PSI; }								\
   base = st.GetInfo(ptype,local,perm,Dir,ent,plocal); ent++;\
   if((!local)&&(!st.same_node[Dir]) ) {					    \
     LOAD_CHI(base);							                \
     MULT_2SPIN_1(Dir);					                    \
-    PREFETCH_CHIMU(base);                                   \
+    /* PREFETCH_CHIMU(base);  */                                 \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
-    if (s == 0) {                                           \
-      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }                                                       \
+    /* if (s == 0) {   */                                        \
+    /*  if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } */ \
+    /* } */                                                      \
     RECON;								                    \
     nmu++;								                    \
   }
@@ -209,7 +210,6 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
     int ssn=ssU+1;     if(ssn>=nmax) ssn=0;
     //    int sUn=lo.Reorder(ssn);
     int sUn=ssn;
-    LOCK_GAUGE(0);
 #else
     int sU =ssU;
     int ssn=ssU+1;     if(ssn>=nmax) ssn=0;

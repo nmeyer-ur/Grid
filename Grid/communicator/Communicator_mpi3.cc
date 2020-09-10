@@ -56,11 +56,8 @@ void CartesianCommunicator::Init(int *argc, char ***argv)
 
 #if defined (TOFU) // FUGAKU, credits go to Issaku Kanamori
     nCommThreads=1;
-    // wrong results here too
+    
     //MPI_Init(argc,argv);
-
-    // comms-overlap leads to wrong results in Benchmark_wilson even on single node MPI runs
-    // other comms schemes are ok
     MPI_Init_thread(argc,argv,MPI_THREAD_SERIALIZED,&provided);
 #else
     MPI_Init_thread(argc,argv,MPI_THREAD_MULTIPLE,&provided);
