@@ -915,8 +915,7 @@ define(F'SAVE_RESULT(A,B)               RESULT_{PRECSUFFIX}(A); PREFETCH_RESULT_
 define(F'MULT_2SPIN_1(Dir)              MULT_2SPIN_1_{PRECSUFFIX}(Dir)')
 define(F'MULT_2SPIN_2                   MULT_2SPIN_2_{PRECSUFFIX}')
 define(F'LOAD_CHI(base)                 LOAD_CHI_{PRECSUFFIX}(base)')
-# don't need zero psi, everything is done in recons
-#define(F'ZERO_PSI                       ZERO_PSI_{PRECSUFFIX}')
+define(F'ZERO_PSI                       ZERO_PSI_{PRECSUFFIX}')
 define(F'ADD_RESULT(base,basep)         LOAD_CHIMU(base); ADD_RESULT_INTERNAL_{PRECSUFFIX}; RESULT_{PRECSUFFIX}(base)')
 # loads projections
 define(F'XP_PROJ                        XP_PROJ_{PRECSUFFIX}')
