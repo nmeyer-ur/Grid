@@ -104,10 +104,10 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
     PREFETCH_CHIMU(base);                                   \
     PREFETCH_CHIMU_L2(basep);                               \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
-    MULT_2SPIN_2;					                        \
     if (s == 0) {                                           \
-       if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }                                                       \
+      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
+    }        \
+    MULT_2SPIN_2;					                        \
     RECON;								                    \
 
 #define ASM_LEG_XP(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)	    \
@@ -137,8 +137,12 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
   MULT_2SPIN_2;					                        \
 	RECON;								\
       }									\
-      base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
-      PREFETCH_CHIMU(base);						\
+  if (s == 0) {                                           \
+     if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
+  }                                                       \
+  base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
+  PREFETCH_CHIMU(base);						\
+  PREFETCH_CHIMU_L2(basep);                               \
 
 #define ASM_LEG_XP(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)			\
   base = st.GetInfo(ptype,local,perm,Dir,ent,plocal); ent++;		\
