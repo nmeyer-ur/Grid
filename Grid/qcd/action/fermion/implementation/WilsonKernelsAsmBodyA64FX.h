@@ -110,6 +110,15 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
     MULT_2SPIN_2;					                        \
     RECON;								                    \
 
+/*
+NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
+    though I expected that it would improve on performance
+
+    if (s == 0) {                                           \
+      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
+    }        \
+*/
+
 #define ASM_LEG_XP(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)	    \
   base = st.GetInfo(ptype,local,perm,Dir,ent,plocal); ent++; \
   PREFETCH1_CHIMU(base);						            \

@@ -42,8 +42,8 @@ Author: Nils Meyer <nils.meyer@ur.de>
 #define MULT_2SPIN_1(Dir)              MULT_2SPIN_1_A64FXd(Dir)  
 #define MULT_2SPIN_2                   MULT_2SPIN_2_A64FXd  
 #define LOAD_CHI(base)                 LOAD_CHI_A64FXd(base)  
-#define ADD_RESULT(base,basep)         LOAD_CHIMU(base); ADD_RESULT_INTERNAL_A64FXd; RESULT_A64FXd(base) 
-#define ZERO_PSI                       ZERO_PSI_A64FXd
+#define ZERO_PSI                       ZERO_PSI_A64FXd  
+#define ADD_RESULT(base,basep)         LOAD_CHIMU(base); ADD_RESULT_INTERNAL_A64FXd; RESULT_A64FXd(base)  
 #define XP_PROJ                        XP_PROJ_A64FXd  
 #define YP_PROJ                        YP_PROJ_A64FXd  
 #define ZP_PROJ                        ZP_PROJ_A64FXd  
@@ -571,12 +571,12 @@ Author: Nils Meyer <nils.meyer@ur.de>
     result_31 = svdup_f64(0.); \
     result_32 = svdup_f64(0.); 
 
-// PREFETCH_RESULT_L2_STORE (prefetch store to L2)
+// PREFETCH_RESULT_L2_STORE (uses DC ZVA for cache line zeroing)
 #define PREFETCH_RESULT_L2_STORE_INTERNAL_A64FXd(base)  \
 { \
-    svprfd(pg1, (int64_t*)(base + 0), SV_PSTL2STRM); \
-    svprfd(pg1, (int64_t*)(base + 256), SV_PSTL2STRM); \
-    svprfd(pg1, (int64_t*)(base + 512), SV_PSTL2STRM); \
+    asm( "dc zva, %[fetchptr] \n\t" : : [fetchptr] "r" (base + 256 * 0) : "memory" ); \
+    asm( "dc zva, %[fetchptr] \n\t" : : [fetchptr] "r" (base + 256 * 1) : "memory" ); \
+    asm( "dc zva, %[fetchptr] \n\t" : : [fetchptr] "r" (base + 256 * 2) : "memory" ); \
 }
 // PREFETCH_RESULT_L1_STORE (prefetch store to L1)
 #define PREFETCH_RESULT_L1_STORE_INTERNAL_A64FXd(base)  \

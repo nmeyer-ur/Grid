@@ -42,6 +42,7 @@ Author: Nils Meyer <nils.meyer@ur.de>
 #define MULT_2SPIN_1(Dir)              MULT_2SPIN_1_A64FXf(Dir)  
 #define MULT_2SPIN_2                   MULT_2SPIN_2_A64FXf  
 #define LOAD_CHI(base)                 LOAD_CHI_A64FXf(base)  
+#define ZERO_PSI                       ZERO_PSI_A64FXf  
 #define ADD_RESULT(base,basep)         LOAD_CHIMU(base); ADD_RESULT_INTERNAL_A64FXf; RESULT_A64FXf(base)  
 #define XP_PROJ                        XP_PROJ_A64FXf  
 #define YP_PROJ                        YP_PROJ_A64FXf  
@@ -733,13 +734,13 @@ asm ( \
     : "p5","cc","z0","z1","z2","z3","z4","z5","z6","z7","z8","z9","z10","z11","z12","z13","z14","z15","z16","z17","z18","z19","z20","z21","z22","z23","z24","z25","z26","z27","z28","z29","z30","z31" \
 ); 
 
-// PREFETCH_RESULT_L2_STORE (prefetch store to L2)
+// PREFETCH_RESULT_L2_STORE (uses DC ZVA for cache line zeroing)
 #define PREFETCH_RESULT_L2_STORE_INTERNAL_A64FXf(base)  \
 { \
 asm ( \
-    "prfd PSTL2STRM, p5, [%[fetchptr], 0, mul vl] \n\t" \
-    "prfd PSTL2STRM, p5, [%[fetchptr], 4, mul vl] \n\t" \
-    "prfd PSTL2STRM, p5, [%[fetchptr], 8, mul vl] \n\t" \
+    "dc zva, %[fetchptr]\n\t" \
+    "dc zva, %[fetchptr]\n\t" \
+    "dc zva, %[fetchptr]\n\t" \
     :  \
     : [fetchptr] "r" (base) \
     : "p5","cc","z0","z1","z2","z3","z4","z5","z6","z7","z8","z9","z10","z11","z12","z13","z14","z15","z16","z17","z18","z19","z20","z21","z22","z23","z24","z25","z26","z27","z28","z29","z30","z31","memory" \

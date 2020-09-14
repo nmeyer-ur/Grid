@@ -635,6 +635,12 @@ def prefetch_L1_store(address, offset):
     d['I'] += F'    svprfd(pg1, (int64_t*)({address} + {offset * multiplier * 64}), SV_{policy}); \\\n'
     d['A'] += F'    "prfd {policy}, {pg1.asmreg}, [%[fetchptr], {offset * multiplier}, mul vl] \\n\\t" \\\n'
 
+def dc_zva(address, offset):  # zero fill
+    global d
+    multiplier = 256  # offset in CL, have to multiply by 256
+
+    d['I'] += F'    asm( "dc zva, %[fetchptr] \\n\\t" : : [fetchptr] "r" ({address} + {multiplier} * {offset}) : "memory" ); \\\n'
+    d['A'] += F'    "dc zva, %[fetchptr]\\n\\t" \\\n'
 
 def asmopen():
     #write('asm volatile ( \\', target='A')
@@ -2109,15 +2115,20 @@ newline()
 # prefetch store spinors to L2 cache
 d['factor'] = 0
 d['cycles_PREFETCH_L2'] += 0 * d['factor']
-write('// PREFETCH_RESULT_L2_STORE (prefetch store to L2)')
+#write('// PREFETCH_RESULT_L2_STORE (prefetch store to L2)')
+write('// PREFETCH_RESULT_L2_STORE (uses DC ZVA for cache line zeroing)')
 definemultiline(F'PREFETCH_RESULT_L2_STORE_INTERNAL_{PRECSUFFIX}(base)')
 curlyopen()
 fetch_base_ptr(F"base")
 asmopen()
 fetch_base_ptr(F"base", target='A')
-prefetch_L2_store(F"base", 0)
-prefetch_L2_store(F"base", 1)
-prefetch_L2_store(F"base", 2)
+#prefetch_L2_store(F"base", 0)
+#prefetch_L2_store(F"base", 1)
+#prefetch_L2_store(F"base", 2)
+# test DC ZVA
+dc_zva(F"base", 0)
+dc_zva(F"base", 1)
+dc_zva(F"base", 2)
 asmclose()
 curlyclose()
 newline()
