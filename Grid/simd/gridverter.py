@@ -231,15 +231,15 @@ class Register:
         indices = re.findall(r'\d+', address)
         index = (int(indices[0]) - offset) * colors + int(indices[1])
 
-        #asm_opcode = 'ld1d'
-        #if PRECISION == 'single':
-        #asm_opcode = 'ld1w'
-        #    cast = 'float32_t'
-
-        asm_opcode = 'ldr'
+        asm_opcode = 'ld1d'
         if PRECISION == 'single':
-            asm_opcode = 'ldr'
+            asm_opcode = 'ld1w'
             cast = 'float32_t'
+
+        #asm_opcode = 'ldr'
+        #if PRECISION == 'single':
+        #    asm_opcode = 'ldr'
+        #    cast = 'float32_t'
 
         gpr = d['asmfetchbaseptr']
         intrinfetchbase = d['intrinfetchbase']
@@ -1018,6 +1018,10 @@ if PRECISION == 'double':
     pg1.movestr('svptrue_b64()')
 else:
     pg1.movestr('svptrue_b32()')
+asmopen()
+pg1.loadpredication()
+asmclose()
+#newline()
 
 # tables
 if PRECISION == 'double':
@@ -1204,38 +1208,38 @@ if ASM_LOAD_CHIMU:
     curlyopen()
     #write('    const SiteSpinor & ref(in[offset]); \\')
     asmopen()
-    pg1.loadpredication()
+    #pg1.loadpredication()
     #fetch_base_ptr("&ref[0][0]")
     #fetch_base_ptr(F"&ref[{FETCH_BASE_PTR_COLOR_OFFSET}][0]")
     fetch_base_ptr(F"base + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='I')
     fetch_base_ptr(F"base + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='A')
-    # Chimu_00.load("ref[0][0]")
-    # Chimu_01.load("ref[0][1]")
-    # Chimu_02.load("ref[0][2]")
-    # Chimu_10.load("ref[1][0]")
-    # Chimu_11.load("ref[1][1]")
-    # Chimu_12.load("ref[1][2]")
-    # Chimu_20.load("ref[2][0]")
-    # Chimu_21.load("ref[2][1]")
-    # Chimu_22.load("ref[2][2]")
-    # Chimu_30.load("ref[3][0]")
-    # Chimu_31.load("ref[3][1]")
-    # Chimu_32.load("ref[3][2]")
-
-    Chimu_00.load("ref[0][0]")  # minimum penalty for all directions
-    Chimu_30.load("ref[3][0]")
-    Chimu_10.load("ref[1][0]")
-    Chimu_20.load("ref[2][0]")
-
+    Chimu_00.load("ref[0][0]")  # consecutive version
     Chimu_01.load("ref[0][1]")
-    Chimu_31.load("ref[3][1]")
-    Chimu_11.load("ref[1][1]")
-    Chimu_21.load("ref[2][1]")
-
     Chimu_02.load("ref[0][2]")
-    Chimu_32.load("ref[3][2]")
+    Chimu_10.load("ref[1][0]")
+    Chimu_11.load("ref[1][1]")
     Chimu_12.load("ref[1][2]")
+    Chimu_20.load("ref[2][0]")
+    Chimu_21.load("ref[2][1]")
     Chimu_22.load("ref[2][2]")
+    Chimu_30.load("ref[3][0]")
+    Chimu_31.load("ref[3][1]")
+    Chimu_32.load("ref[3][2]")
+
+    #Chimu_00.load("ref[0][0]")  # interleaved version, minimum penalty for all directions
+    #Chimu_30.load("ref[3][0]")
+    #Chimu_10.load("ref[1][0]")
+    #Chimu_20.load("ref[2][0]")
+
+    #Chimu_01.load("ref[0][1]")
+    #Chimu_31.load("ref[3][1]")
+    #Chimu_11.load("ref[1][1]")
+    #Chimu_21.load("ref[2][1]")
+
+    #Chimu_02.load("ref[0][2]")
+    #Chimu_32.load("ref[3][2]")
+    #Chimu_12.load("ref[1][2]")
+    #Chimu_22.load("ref[2][2]")
     asmclose()
     debugall('LOAD_CHIMU', group='Chimu')
     curlyclose()
@@ -1251,7 +1255,7 @@ if ASM_LOAD_CHIMU:
     curlyopen()
     write('    const SiteSpinor & ref(in[offset]); \\')
     asmopen()
-    pg1.loadpredication()
+    #pg1.loadpredication()
     fetch_base_ptr(F"&ref[{FETCH_BASE_PTR_COLOR_OFFSET}][0]")
     Chimu_00.load("ref[0][0]")  # reordered
     Chimu_20.load("ref[2][0]")
@@ -1285,7 +1289,7 @@ if ASM_LOAD_CHIMU:
     curlyopen()
     write('    const SiteSpinor & ref(in[offset]); \\')
     asmopen()
-    pg1.loadpredication()
+    #pg1.loadpredication()
     fetch_base_ptr(F"&ref[{FETCH_BASE_PTR_COLOR_OFFSET}][0]")
     Chimu_00.load("ref[0][0]")  # reordered
     Chimu_30.load("ref[3][0]")
@@ -1363,14 +1367,14 @@ debugall('PERM POST', group='Chi')
 newline()
 
 write('// LOAD_GAUGE')
-definemultiline(F'LOAD_GAUGE')
+definemultiline(F'LOAD_GAUGE(A)')
+curlyopen()
 if GRIDBENCH:   # referencing differs in Grid and GridBench
     write('    const auto & ref(U[sU][A]); uint64_t baseU = (uint64_t)&ref; \\')
 else:
     write('    const auto & ref(U[sU](A)); uint64_t baseU = (uint64_t)&ref; \\')
-curlyopen()
 asmopen()
-pg1.loadpredication()
+#pg1.loadpredication()
 fetch_base_ptr(F"baseU + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='I')
 if ASM_LOAD_GAUGE:
     fetch_base_ptr(F"baseU + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='A')
@@ -1788,7 +1792,7 @@ if ALTERNATIVE_LOADS == True:
     write('    LOAD_CHIMU_0213_PLUG \\')
 curlyopen()
 asmopen()
-pg1.loadpredication()
+#pg1.loadpredication()
 Chi_00.sub(Chimu_00, Chimu_20)
 Chi_01.sub(Chimu_01, Chimu_21)
 Chi_02.sub(Chimu_02, Chimu_22)
@@ -2096,7 +2100,7 @@ d['cycles_ZERO_PSI'] += 6 * d['factor']
 write('// ZERO_PSI')
 definemultiline(F'ZERO_PSI_{PRECSUFFIX}')
 asmopen()
-pg1.loadpredication()
+#pg1.loadpredication()
 result_00.zero()
 result_01.zero()
 result_02.zero()
