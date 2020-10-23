@@ -64,7 +64,7 @@ int main (int argc, char ** argv)
   FermionField    err(&Grid);    tmp=Zero();
   FermionField phi   (&Grid); random(pRNG,phi);
   FermionField chi   (&Grid); random(pRNG,chi);
-  LatticeGaugeField Umu(&Grid); SU3::HotConfiguration(pRNG,Umu);
+  LatticeGaugeField Umu(&Grid); SU<Nc>::HotConfiguration(pRNG,Umu);
   std::vector<LatticeColourMatrix> U(4,&Grid);
 
 
@@ -261,11 +261,11 @@ int main (int argc, char ** argv)
   pickCheckerboard(Odd ,phi_o,phi);
 
   SchurDiagMooeeOperator<NaiveStaggeredFermionR,FermionField> HermOpEO(Ds);
-  HermOpEO.MpcDagMpc(chi_e,dchi_e,t1,t2);
-  HermOpEO.MpcDagMpc(chi_o,dchi_o,t1,t2);
+  HermOpEO.MpcDagMpc(chi_e,dchi_e);
+  HermOpEO.MpcDagMpc(chi_o,dchi_o);
 
-  HermOpEO.MpcDagMpc(phi_e,dphi_e,t1,t2);
-  HermOpEO.MpcDagMpc(phi_o,dphi_o,t1,t2);
+  HermOpEO.MpcDagMpc(phi_e,dphi_e);
+  HermOpEO.MpcDagMpc(phi_o,dphi_o);
 
   pDce = innerProduct(phi_e,dchi_e);
   pDco = innerProduct(phi_o,dchi_o);

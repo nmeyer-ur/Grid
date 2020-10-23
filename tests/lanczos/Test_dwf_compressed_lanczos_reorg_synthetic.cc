@@ -293,7 +293,7 @@ int main (int argc, char ** argv) {
   {
     std::vector<int> seeds4({1,2,3,4});
     GridParallelRNG          RNG4(UGrid);  RNG4.SeedFixedIntegers(seeds4);
-    SU3::HotConfiguration(RNG4, Umu);
+    SU<Nc>::HotConfiguration(RNG4, Umu);
   }
   std::cout << GridLogMessage << "Lattice dimensions: " << GridDefaultLatt() << "   Ls: " << Ls << std::endl;
 
@@ -311,7 +311,7 @@ int main (int argc, char ** argv) {
   std::cout << GridLogMessage << "Keep " << coarse.Nk << " total vectors" << std::endl;
   assert(Nm2 >= Nm1);
 
-  const int nbasis= 70;
+  const int nbasis= 32;
   CoarseFineIRL<vSpinColourVector,vTComplex,nbasis> IRL(FrbGrid,CoarseGrid5rb,HermOp,Odd);
 
   std::cout << GridLogMessage << "Constructed CoarseFine IRL" << std::endl;

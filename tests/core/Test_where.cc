@@ -2,7 +2,7 @@
 
     Grid physics library, www.github.com/paboyle/Grid 
 
-    Source file: ./tests/Test_wilson_cg_unprec.cc
+    Source file: ./tests/Test_poisson_fft.cc
 
     Copyright (C) 2015
 
@@ -28,51 +28,53 @@ Author: Peter Boyle <paboyle@ph.ed.ac.uk>
     /*  END LEGAL */
 #include <Grid/Grid.h>
 
-using namespace std;
 using namespace Grid;
  ;
-
-template<class d>
-struct scal {
-  d internal;
-};
-
-  Gamma::Algebra Gmu [] = {
-    Gamma::Algebra::GammaX,
-    Gamma::Algebra::GammaY,
-    Gamma::Algebra::GammaZ,
-    Gamma::Algebra::GammaT
-  };
 
 int main (int argc, char ** argv)
 {
   Grid_init(&argc,&argv);
 
-  Coordinate latt_size   = GridDefaultLatt();
-  Coordinate simd_layout = GridDefaultSimd(Nd,vComplex::Nsimd());
-  Coordinate mpi_layout  = GridDefaultMpi();
-  GridCartesian               Grid(latt_size,simd_layout,mpi_layout);
-  GridRedBlackCartesian     RBGrid(&Grid);
+  int threads = GridThread::GetThreads();
+  std::cout<<GridLogMessage << "Grid is setup to use "<<threads<<" threads"<<std::endl;
 
-  std::vector<int> seeds({1,2,3,4});
-  GridParallelRNG          pRNG(&Grid);  pRNG.SeedFixedIntegers(seeds);
-
-  LatticeFermion src(&Grid); random(pRNG,src);
-  RealD nrm = norm2(src);
-  LatticeFermion result(&Grid); result=Zero();
-  LatticeGaugeField Umu(&Grid); SU<Nc>::HotConfiguration(pRNG,Umu);
-
-  double volume=1;
-  for(int mu=0;mu<Nd;mu++){
-    volume=volume*latt_size[mu];
-  }  
+  int N=16;
   
-  RealD mass=0.5;
-  WilsonFermionR Dw(Umu,Grid,RBGrid,mass);
+  std::vector<int> latt_size  ({N,4,4});
+  std::vector<int> simd_layout({vComplexD::Nsimd(),1,1});
+  std::vector<int> mpi_layout ({1,1,1});
 
-  MdagMLinearOperator<WilsonFermionR,LatticeFermion> HermOp(Dw);
-  ConjugateGradient<LatticeFermion> CG(1.0e-8,10000);
-  CG(HermOp,src,result);
+  int vol = 1;
+  int nd  = latt_size.size();
+  for(int d=0;d<nd;d++){
+    vol = vol * latt_size[d];
+  }
+
+  GridCartesian         GRID(latt_size,simd_layout,mpi_layout);
+
+  LatticeComplexD      zz(&GRID);
+  LatticeInteger     coor(&GRID);
+  LatticeComplexD  rn(&GRID);
+  LatticeComplexD  sl(&GRID);
+
+  zz  = ComplexD(0.0,0.0);
+
+  GridParallelRNG RNG(&GRID);
+  RNG.SeedFixedIntegers(std::vector<int>({45,12,81,9}));  
+  gaussian(RNG,rn);
+
+  RealD nn=norm2(rn);
+  for(int mu=0;mu<nd;mu++){
+    RealD ns=0.0;
+    for(int t=0;t<latt_size[mu];t++){
+      LatticeCoordinate(coor,mu);
+      sl=where(coor==Integer(t),rn,zz);
+      std::cout <<GridLogMessage<< " sl " << sl<<std::endl;
+      std::cout <<GridLogMessage<<" slice "<<t<<" " << norm2(sl)<<std::endl;
+      ns=ns+norm2(sl);
+    }
+    std::cout <<GridLogMessage <<" sliceNorm" <<mu<<" "<< nn <<" "<<ns<<" " << nn-ns<<std::endl;
+  }
 
   Grid_finalize();
 }

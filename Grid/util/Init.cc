@@ -380,9 +380,7 @@ void Grid_init(int *argc,char ***argv)
     std::cout << GridLogMessage << "Mapped stencil comms buffers as MAP_HUGETLB "<<std::endl;
   }
 
-#ifndef GRID_UVM
-  std::cout << GridLogMessage << "MemoryManager Cache "<< MemoryManager::DeviceMaxBytes <<" bytes "<<std::endl;
-#endif
+  MemoryManager::InitMessage();
 
   if( GridCmdOptionExists(*argv,*argv+*argc,"--debug-mem") ){
     MemoryProfiler::debug = true;
@@ -477,7 +475,7 @@ void Grid_init(int *argc,char ***argv)
   if( GridCmdOptionExists(*argv,*argv+*argc,"--lebesgue") ){
     LebesgueOrder::UseLebesgueOrder=1;
   }
-  CartesianCommunicator::nCommThreads = -1;
+  CartesianCommunicator::nCommThreads = 1;
   if( GridCmdOptionExists(*argv,*argv+*argc,"--comms-threads") ){
     arg= GridCmdOptionPayload(*argv,*argv+*argc,"--comms-threads");
     GridCmdOptionInt(arg,CartesianCommunicator::nCommThreads);

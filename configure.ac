@@ -123,6 +123,24 @@ case ${ac_LAPACK} in
         AC_DEFINE([USE_LAPACK],[1],[use LAPACK]);;
 esac
 
+############### Nc
+AC_ARG_ENABLE([Nc],
+    [AC_HELP_STRING([--enable-Nc=2|3|4], [enable number of colours])],
+    [ac_Nc=${enable_Nc}], [ac_Nc=3])
+
+case ${ac_Nc} in
+    2)
+        AC_DEFINE([Config_Nc],[2],[Gauge group Nc]);;
+    3)
+        AC_DEFINE([Config_Nc],[3],[Gauge group Nc]);;
+    4)
+        AC_DEFINE([Config_Nc],[4],[Gauge group Nc]);;
+    5)
+        AC_DEFINE([Config_Nc],[5],[Gauge group Nc]);;
+    *)
+      AC_MSG_ERROR(["Unsupport gauge group choice Nc = ${ac_Nc}"]);;
+esac
+
 ############### FP16 conversions
 AC_ARG_ENABLE([sfw-fp16],
     [AC_HELP_STRING([--enable-sfw-fp16=yes|no], [enable software fp16 comms])],
@@ -154,6 +172,7 @@ AC_ARG_ENABLE([accelerator],
 case ${ac_ACCELERATOR} in
     cuda)
       echo CUDA acceleration
+      LIBS="${LIBS} -lcuda"
       AC_DEFINE([GRID_CUDA],[1],[Use CUDA offload]);;
     sycl)
       echo SYCL acceleration
@@ -323,18 +342,23 @@ case ${CXXTEST} in
 #    CXXLD="nvcc -v -link"
     CXX="${CXXBASE} -x cu "
     CXXLD="${CXXBASE} -link"
-#    CXXFLAGS="$CXXFLAGS -Xcompiler -fno-strict-aliasing -Xcompiler -Wno-unusable-partial-specialization --expt-extended-lambda --expt-relaxed-constexpr"
     CXXFLAGS="$CXXFLAGS -Xcompiler -fno-strict-aliasing --expt-extended-lambda --expt-relaxed-constexpr"
     if test $ac_openmp = yes; then
        CXXFLAGS="$CXXFLAGS -Xcompiler -fopenmp"
     fi
     ;;
   hipcc)
-    CXXFLAGS="$CXXFLAGS -Xcompiler -fno-strict-aliasing --expt-extended-lambda --expt-relaxed-constexpr"
+#    CXXFLAGS="$CXXFLAGS -Xcompiler -fno-strict-aliasing --expt-extended-lambda --expt-relaxed-constexpr"
+    CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
     CXXLD=${CXX}
     if test $ac_openmp = yes; then
        CXXFLAGS="$CXXFLAGS -Xcompiler -fopenmp"
     fi
+    ;;
+  dpcpp)
+    LDFLAGS="$LDFLAGS"
+    CXXFLAGS="$CXXFLAGS"
+    CXXLD=${CXX}
     ;;
   *)
     CXXLD=${CXX}
@@ -453,23 +477,24 @@ esac
 AM_CXXFLAGS="$SIMD_FLAGS $AM_CXXFLAGS"
 AM_CFLAGS="$SIMD_FLAGS $AM_CFLAGS"
 
-############### Precision selection
-AC_ARG_ENABLE([precision],
-              [AC_HELP_STRING([--enable-precision=single|double],
-                              [Select default word size of Real])],
-              [ac_PRECISION=${enable_precision}],[ac_PRECISION=double])
+############### Precision selection - deprecate
+#AC_ARG_ENABLE([precision],
+#              [AC_HELP_STRING([--enable-precision=single|double],
+#                              [Select default word size of Real])],
+#              [ac_PRECISION=${enable_precision}],[ac_PRECISION=double])
 
-case ${ac_PRECISION} in
-     single)
-       AC_DEFINE([GRID_DEFAULT_PRECISION_SINGLE],[1],[GRID_DEFAULT_PRECISION is SINGLE] )
-     ;;
-     double)
-       AC_DEFINE([GRID_DEFAULT_PRECISION_DOUBLE],[1],[GRID_DEFAULT_PRECISION is DOUBLE] )
-     ;;
-     *)
-     AC_MSG_ERROR([${ac_PRECISION} unsupported --enable-precision option]);
-     ;;
-esac
+AC_DEFINE([GRID_DEFAULT_PRECISION_DOUBLE],[1],[GRID_DEFAULT_PRECISION is DOUBLE] )
+
+#case ${ac_PRECISION} in
+#     single)
+#       AC_DEFINE([GRID_DEFAULT_PRECISION_SINGLE],[1],[GRID_DEFAULT_PRECISION is SINGLE] )
+#     ;;
+#     double)
+#     ;;
+#     *)
+#     AC_MSG_ERROR([${ac_PRECISION} unsupported --enable-precision option]);
+#     ;;
+#esac
 
 ######################  Shared memory allocation technique under MPI3
 AC_ARG_ENABLE([shm],[AC_HELP_STRING([--enable-shm=shmopen|shmget|hugetlbfs|shmnone],
@@ -483,8 +508,7 @@ case ${ac_SHM} in
      LDFLAGS_CPY=$LDFLAGS
      CXXFLAGS="$AM_CXXFLAGS $CXXFLAGS"
      LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-     AC_SEARCH_LIBS([shm_unlink], [rt], [],
-                    [AC_MSG_ERROR("no library found for shm_unlink")])
+     AC_SEARCH_LIBS([shm_unlink], [rt], [],[AC_MSG_ERROR("no library found for shm_unlink")])
      CXXFLAGS=$CXXFLAGS_CPY
      LDFLAGS=$LDFLAGS_CPY
      ;;
@@ -651,6 +675,7 @@ os (target)                 : $target_os
 compiler vendor             : ${ax_cv_cxx_compiler_vendor}
 compiler version            : ${ax_cv_gxx_version}
 ----- BUILD OPTIONS -----------------------------------
+Nc                          : ${ac_Nc}
 SIMD                        : ${ac_SIMD}${SIMD_GEN_WIDTH_MSG}
 Threading                   : ${ac_openmp}
 Acceleration                : ${ac_ACCELERATOR}

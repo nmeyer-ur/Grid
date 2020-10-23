@@ -137,7 +137,6 @@ int main(int argc, char **argv) {
       LatticeReal iscalar(&Fine);
 
       SpinMatrix GammaFive;
-      iSpinMatrix<vComplex> iGammaFive;
       ColourMatrix cmat;
 
       random(FineRNG, Foo);
@@ -283,7 +282,6 @@ int main(int argc, char **argv) {
       cMat = mydouble * cMat;
 
       sMat = adj(sMat);          // LatticeSpinMatrix adjoint
-      sMat = iGammaFive * sMat;  // SpinMatrix * LatticeSpinMatrix
       sMat = GammaFive * sMat;   // SpinMatrix * LatticeSpinMatrix
       scMat = adj(scMat);
       cMat = adj(cMat);
@@ -446,7 +444,7 @@ int main(int argc, char **argv) {
       // Lattice 12x12 GEMM
       scFooBar = scFoo * scBar;
 
-      // Benchmark some simple operations LatticeSU3 * Lattice SU3.
+      // Benchmark some simple operations LatticeSU<Nc> * Lattice SU<Nc>.
       double t0, t1, flops;
       double bytes;
       int ncall = 5000;

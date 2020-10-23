@@ -27,8 +27,8 @@ Author: neo <cossu@post.kek.jp>
     See the full license in the file "LICENSE" in the top level distribution directory
 *************************************************************************************/
 /*  END LEGAL */
-#ifndef GRID_LATTICE_REALITY_H
-#define GRID_LATTICE_REALITY_H
+#ifndef GRID_LATTICE_REAL_IMAG_H
+#define GRID_LATTICE_REAL_IMAG_H
 
 
 // FIXME .. this is the sector of the code 
@@ -38,7 +38,7 @@ Author: neo <cossu@post.kek.jp>
 
 NAMESPACE_BEGIN(Grid);
 
-template<class vobj> inline Lattice<vobj> adj(const Lattice<vobj> &lhs){
+template<class vobj> inline Lattice<vobj> real(const Lattice<vobj> &lhs){
   Lattice<vobj> ret(lhs.Grid());
 
   autoView( lhs_v, lhs, AcceleratorRead);
@@ -46,69 +46,32 @@ template<class vobj> inline Lattice<vobj> adj(const Lattice<vobj> &lhs){
 
   ret.Checkerboard()=lhs.Checkerboard();
   accelerator_for( ss, lhs_v.size(), 1, {
-     ret_v[ss] = adj(lhs_v[ss]);
+    ret_v[ss] =real(lhs_v[ss]);
   });
   return ret;
 };
-
-template<class vobj> inline Lattice<vobj> conjugate(const Lattice<vobj> &lhs){
+template<class vobj> inline Lattice<vobj> imag(const Lattice<vobj> &lhs){
   Lattice<vobj> ret(lhs.Grid());
 
   autoView( lhs_v, lhs, AcceleratorRead);
   autoView( ret_v, ret, AcceleratorWrite);
 
-  ret.Checkerboard() = lhs.Checkerboard();
-  accelerator_for( ss, lhs_v.size(), vobj::Nsimd(), {
-    coalescedWrite( ret_v[ss] , conjugate(lhs_v(ss)));
-  });
-  return ret;
-};
-
-template<class vobj> inline Lattice<typename vobj::Complexified> toComplex(const Lattice<vobj> &lhs){
-  Lattice<typename vobj::Complexified> ret(lhs.Grid());
-
-  autoView( lhs_v, lhs, AcceleratorRead);
-  autoView( ret_v, ret, AcceleratorWrite);
-
-  ret.Checkerboard() = lhs.Checkerboard();
+  ret.Checkerboard()=lhs.Checkerboard();
   accelerator_for( ss, lhs_v.size(), 1, {
-    ret_v[ss] = toComplex(lhs_v[ss]);
-  });
-  return ret;
-};
-template<class vobj> inline Lattice<typename vobj::Realified> toReal(const Lattice<vobj> &lhs){
-  Lattice<typename vobj::Realified> ret(lhs.Grid());
-
-  autoView( lhs_v, lhs, AcceleratorRead);
-  autoView( ret_v, ret, AcceleratorWrite);
-
-  ret.Checkerboard() = lhs.Checkerboard();
-  accelerator_for( ss, lhs_v.size(), 1, {
-    ret_v[ss] = toReal(lhs_v[ss]);
+    ret_v[ss] =imag(lhs_v[ss]);
   });
   return ret;
 };
 
-
 template<class Expression,typename std::enable_if<is_lattice_expr<Expression>::value,void>::type * = nullptr> 
-auto toComplex(const Expression &expr)  -> decltype(closure(expr)) 
-{
-  return toComplex(closure(expr));
+  auto real(const Expression &expr) -> decltype(real(closure(expr)))		
+{									
+  return real(closure(expr));					
 }
 template<class Expression,typename std::enable_if<is_lattice_expr<Expression>::value,void>::type * = nullptr> 
-auto toReal(const Expression &expr)  -> decltype(closure(expr)) 
-{
-  return toReal(closure(expr));
-}
-template<class Expression,typename std::enable_if<is_lattice_expr<Expression>::value,void>::type * = nullptr> 
-auto adj(const Expression &expr)  -> decltype(closure(expr)) 
-{
-  return adj(closure(expr));
-}
-template<class Expression,typename std::enable_if<is_lattice_expr<Expression>::value,void>::type * = nullptr> 
-auto conjugate(const Expression &expr)  -> decltype(closure(expr)) 
-{
-  return conjugate(closure(expr));
+  auto imag(const Expression &expr) -> decltype(imag(closure(expr)))		
+{									
+  return imag(closure(expr));					
 }
 
 NAMESPACE_END(Grid);

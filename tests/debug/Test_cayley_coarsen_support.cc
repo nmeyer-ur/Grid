@@ -77,7 +77,7 @@ int main (int argc, char ** argv)
   LatticeFermion    ref(FGrid); ref=Zero();
   LatticeFermion    tmp(FGrid);
   LatticeFermion    err(FGrid);
-  LatticeGaugeField Umu(UGrid); SU3::HotConfiguration(RNG4,Umu);
+  LatticeGaugeField Umu(UGrid); SU<Nc>::HotConfiguration(RNG4,Umu);
 
 #if 0
   std::vector<LatticeColourMatrix> U(4,UGrid);
@@ -122,7 +122,7 @@ int main (int argc, char ** argv)
   typedef Aggregation<vSpinColourVector,vTComplex,nbasis> Subspace;
 
   Subspace Aggregates(Coarse5d,FGrid,cb);
-  Aggregates.CreateSubspaceRandom(RNG5);
+  //  Aggregates.CreateSubspaceRandom(RNG5);
 
   subspace=Aggregates.subspace;
 
@@ -163,7 +163,7 @@ int main (int argc, char ** argv)
   LittleDiracOp.M(c_src,c_res);
 
   std::cout<<GridLogMessage<<"Testing hermiticity explicitly by inspecting matrix elements"<<std::endl;
-  LittleDiracOp.AssertHermitian();
+  //  LittleDiracOp.AssertHermitian();
 
   std::cout<<GridLogMessage << "Testing Hermiticity stochastically "<< std::endl;
   CoarseVector phi(Coarse5d);
