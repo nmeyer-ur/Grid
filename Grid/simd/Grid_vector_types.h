@@ -887,7 +887,7 @@ accelerator_inline Grid_simd<S, V> operator*(Grid_simd<S, V> a, Grid_simd<S, V> 
   return ret;
 };
 
-// ---------------- A64FX MULTCC/MAC -------------------
+// ---------------- A64FX MAC -------------------
 // Distinguish between complex types and others
 #if defined(A64FX) || defined(A64FXFIXEDSIZE)
 // complex FMA
@@ -903,22 +903,6 @@ template <class S, class V, IfNotComplex<S> = 0>
 accelerator_inline Grid_simd<S, V> fxmac(Grid_simd<S, V> a, Grid_simd<S, V> b, Grid_simd<S, V> c) {
   Grid_simd<S, V> ret;
   ret.v = trinary<V>(a.v, b.v, c.v, MultSIMD());
-  return ret;
-};
-
-// conj(a) * b
-template <class S, class V, IfComplex<S> = 0>
-accelerator_inline Grid_simd<S, V> multcc(Grid_simd<S, V> a, Grid_simd<S, V> b) {
-  Grid_simd<S, V> ret;
-  ret.v = binary<V>(a.v, b.v, MultComplexConjSIMD());
-  return ret;
-};
-
-// Real/Integer types
-template <class S, class V, IfNotComplex<S> = 0>
-accelerator_inline Grid_simd<S, V> multcc(Grid_simd<S, V> a, Grid_simd<S, V> b) {
-  Grid_simd<S, V> ret;
-  ret.v = binary<V>(a.v, b.v, MultSIMD());
   return ret;
 };
 #endif
