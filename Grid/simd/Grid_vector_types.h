@@ -408,6 +408,8 @@ public:
 				     const Grid_simd *__restrict__ x) {
     *y = (*a) * (*x) + (*y);
   };
+
+
   #endif
 
   friend accelerator_inline void mult(Grid_simd *__restrict__ y,
@@ -905,6 +907,22 @@ accelerator_inline Grid_simd<S, V> fxmac(Grid_simd<S, V> a, Grid_simd<S, V> b, G
   ret.v = trinary<V>(a.v, b.v, c.v, MultSIMD());
   return ret;
 };
+
+// complex mult 0
+template <class S, class V, IfComplex<S> = 0>
+accelerator_inline Grid_simd<S, V> fxmult0(Grid_simd<S, V> a, Grid_simd<S, V> b) {
+  Grid_simd<S, V> ret;
+  ret.v = binary<V>(a.v, b.v, MultComplex0SIMD());
+  return ret;
+};
+// complex mult 1
+template <class S, class V, IfComplex<S> = 0>
+accelerator_inline Grid_simd<S, V> fxmult1(Grid_simd<S, V> a, Grid_simd<S, V> b) {
+  Grid_simd<S, V> ret;
+  ret.v = binary<V>(a.v, b.v, MultComplex1SIMD());
+  return ret;
+};
+
 #endif
 // ----------------------------------------------
 

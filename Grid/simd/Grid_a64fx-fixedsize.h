@@ -370,6 +370,43 @@ struct MultComplex{
   }
 };
 
+struct MultComplex0{
+  // Complex a*b
+  // Complex float
+  inline vecf operator()(vecf a, vecf b){
+    pred pg1 = acle<float>::pg1();
+    vecf z = acle<float>::zero();
+    // using FCMLA
+    return svcmla_x(pg1, z, a, b, 0);
+  }
+  // Complex double
+  inline vecd operator()(vecd a, vecd b){
+    pred pg1 = acle<double>::pg1();
+    vecd z = acle<double>::zero();
+    // using FCMLA
+    return svcmla_x(pg1, z, a, b, 0);
+  }
+};
+
+struct MultComplex1{
+  // Complex a*b
+  // Complex float
+  inline vecf operator()(vecf a, vecf b){
+    pred pg1 = acle<float>::pg1();
+    vecf z = acle<float>::zero();
+    // using FCMLA
+    return svcmla_x(pg1, z, a, b, 90);
+  }
+  // Complex double
+  inline vecd operator()(vecd a, vecd b){
+    pred pg1 = acle<double>::pg1();
+    vecd z = acle<double>::zero();
+    // using FCMLA
+    return svcmla_x(pg1, z, a, b, 90);
+  }
+};
+
+
 struct MultAddComplex{
   // Complex a*b+c
   // Complex float
@@ -759,6 +796,8 @@ typedef Optimization::Sub            SubSIMD;
 typedef Optimization::Div            DivSIMD;
 typedef Optimization::Mult           MultSIMD;
 typedef Optimization::MultComplex    MultComplexSIMD;
+typedef Optimization::MultComplex0   MultComplex0SIMD;
+typedef Optimization::MultComplex1   MultComplex1SIMD;
 typedef Optimization::MultAddComplex MultAddComplexSIMD;
 typedef Optimization::MultRealPart   MultRealPartSIMD;
 typedef Optimization::MaddRealPart   MaddRealPartSIMD;
