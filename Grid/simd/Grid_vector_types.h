@@ -1,4 +1,4 @@
-/*************************************************************************************
+
 
     Grid physics library, www.github.com/paboyle/Grid
 
@@ -284,7 +284,7 @@ public:
     return sizeof(Vector_type) / sizeof(Scalar_type);
   }
 
-  #ifdef ARMCLANGCOMPAT
+  #ifdef ARMCLANGCOMPAT1
     template <class S = Scalar_type>
     accelerator_inline Grid_simd &operator=(const Grid_simd<typename std::enable_if<!is_complex<S>::value, S>::type, Vector_type> &&rhs) {
       //v = rhs.v;
