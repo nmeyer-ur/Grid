@@ -419,11 +419,15 @@ case ${ax_cv_cxx_compiler_vendor} in
       A64FX)
         case ${ax_cv_cxx_compiler_vendor} in
           gnu)
-            AC_DEFINE([A64FX],[1],[A64FX / 512-bit SVE VLS])
+            AC_DEFINE([A64FX],[1],[A64FX / 512-bit SVE VLS gcc])
             SIMD_FLAGS='-march=armv8.2-a+sve -msve-vector-bits=512 -DDSLASHINTRIN';;
           clang)
-            AC_DEFINE([A64FX],[1],[A64FX / 512-bit SVE VLA])
+            AC_DEFINE([A64FX],[1],[A64FX / 512-bit SVE VLA armclang])
             SIMD_FLAGS='-mcpu=a64fx -DDSLASHINTRIN';;
+        esac;;
+      A64FXFCC)
+            AC_DEFINE([A64FX],[1],[A64FX / 512-bit SVE VLA Fujitsu compiler])
+            SIMD_FLAGS='-Nclang -Kfast -DGEN_SIMD_WIDTH=64 -DDSLASHINTRIN';;
         esac;;
       NEONv8)
         AC_DEFINE([NEONV8],[1],[ARMv8 NEON])

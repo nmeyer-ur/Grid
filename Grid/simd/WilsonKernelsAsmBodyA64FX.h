@@ -99,17 +99,13 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
       } else {								                \
 	LOAD_CHI(base);							                \
       }									                    \
-      base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
     MULT_2SPIN_1(Dir);					                    \
-    PREFETCH_CHIMU(base);                                   \
+      base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
+    PREFETCH_CHIMU_L1(base);                                   \
     PREFETCH_CHIMU_L2(basep);                               \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
-    if (s == 0) {                                           \
-      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }        \
     MULT_2SPIN_2;					                        \
     RECON;								                    \
-
 /*
 NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
     though I expected that it would improve on performance
@@ -146,9 +142,6 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
   MULT_2SPIN_2;					                        \
 	RECON;								\
       }									\
-  if (s == 0) {                                           \
-     if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-  }                                                       \
   base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
   PREFETCH_CHIMU(base);						\
   PREFETCH_CHIMU_L2(basep);                               \

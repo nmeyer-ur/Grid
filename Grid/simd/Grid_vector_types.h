@@ -907,10 +907,11 @@ accelerator_inline Grid_simd<S, V> fxmac(Grid_simd<S, V> a, Grid_simd<S, V> b, G
   ret.v = trinary<V>(a.v, b.v, c.v, MultSIMD());
   return ret;
 };
-
+#endif
+#if defined(XXXA64FXFIXEDSIZE)
 // conj(a) * b
 template <class S, class V, IfComplex<S> = 0>
-accelerator_inline Grid_simd<S, V> multcc(Grid_simd<S, V> a, Grid_simd<S, V> b) {
+accelerator_inline Grid_simd<S, V> fxmultcc(Grid_simd<S, V> a, Grid_simd<S, V> b) {
   Grid_simd<S, V> ret;
   ret.v = binary<V>(a.v, b.v, MultComplexConjSIMD());
   return ret;
@@ -918,7 +919,7 @@ accelerator_inline Grid_simd<S, V> multcc(Grid_simd<S, V> a, Grid_simd<S, V> b) 
 
 // Real/Integer types
 template <class S, class V, IfNotComplex<S> = 0>
-accelerator_inline Grid_simd<S, V> multcc(Grid_simd<S, V> a, Grid_simd<S, V> b) {
+accelerator_inline Grid_simd<S, V> fxmultcc(Grid_simd<S, V> a, Grid_simd<S, V> b) {
   Grid_simd<S, V> ret;
   ret.v = binary<V>(a.v, b.v, MultSIMD());
   return ret;
@@ -938,8 +939,7 @@ accelerator_inline Grid_simd<S, V> fxmult1(Grid_simd<S, V> a, Grid_simd<S, V> b)
   ret.v = binary<V>(a.v, b.v, MultComplex1SIMD());
   return ret;
 };
-
-#endif
+#endif    // A64FX
 // ----------------------------------------------
 
 
@@ -1029,6 +1029,17 @@ accelerator_inline Grid_simd<S, V> timesI(const Grid_simd<S, V> &in) {
 /////////////////////
 // Inner, outer
 /////////////////////
+// fxmultcc results in a slight performance penalty for unknown reasons
+#if defined(XXXA64FXFIXEDSIZE)
+template <class S, class V>
+accelerator_inline Grid_simd<S, V> innerProduct(const Grid_simd<S, V> &l,const Grid_simd<S, V> &r) {
+  return fxmultcc(l, r);
+}
+template <class S, class V>
+accelerator_inline Grid_simd<S, V> outerProduct(const Grid_simd<S, V> &l,const Grid_simd<S, V> &r) {
+  return fxmultcc(r, l);
+}
+#else
 template <class S, class V>
 accelerator_inline Grid_simd<S, V> innerProduct(const Grid_simd<S, V> &l,const Grid_simd<S, V> &r) {
   return conjugate(l) * r;
@@ -1037,6 +1048,7 @@ template <class S, class V>
 accelerator_inline Grid_simd<S, V> outerProduct(const Grid_simd<S, V> &l,const Grid_simd<S, V> &r) {
   return l * conjugate(r);
 }
+#endif
 
 template <class S, class V>
 accelerator_inline Grid_simd<S, V> trace(const Grid_simd<S, V> &arg) {
