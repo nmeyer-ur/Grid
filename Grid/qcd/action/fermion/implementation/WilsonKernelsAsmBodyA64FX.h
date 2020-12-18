@@ -25,6 +25,10 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
     See the full license in the file "LICENSE" in the top level distribution directory
 *************************************************************************************/
 /*  END LEGAL */
+
+// GCC 10 messes up instruction scheduling for SVE using -O3,
+// using -O1 does wonders
+
 #ifdef KERNEL_DAG
 #define DIR0_PROJ    XP_PROJ
 #define DIR1_PROJ    YP_PROJ
