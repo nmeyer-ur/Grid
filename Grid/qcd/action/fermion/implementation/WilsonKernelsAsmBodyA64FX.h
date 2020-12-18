@@ -26,8 +26,9 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
 *************************************************************************************/
 /*  END LEGAL */
 
-// GCC 10 messes up instruction scheduling for SVE using -O3,
-// using -O1 does wonders
+// GCC 10 messes up SVE instruction scheduling using -O3 only,
+// using -O3 -fno-schedule-insns -fno-schedule-insns2 does wonders
+// performance is better than armclang 20.2
 
 #ifdef KERNEL_DAG
 #define DIR0_PROJ    XP_PROJ
