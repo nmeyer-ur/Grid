@@ -18,6 +18,7 @@ parser.add_argument("--single", action="store_true", default="False")
 parser.add_argument("--double", action="store_true", default="True")
 parser.add_argument("--debug", action="store_true", default="False")
 parser.add_argument("--gridbench", action="store_true", default="False")
+parser.add_argument("--noprefetch", action="store_true", default="False")
 args = parser.parse_args()
 
 print(args)
@@ -57,8 +58,9 @@ MOVPRFX = False
 MOVPRFX = not MOVPRFX
 
 
-PREFETCH = False
-PREFETCH = not PREFETCH # True
+PREFETCH = True
+if (args.noprefetch == True):
+    PREFETCH = False
 
 PRECISION = 'double'   # DP by default
 PRECSUFFIX = 'A64FXd'
@@ -80,6 +82,7 @@ print("ALTERNATIVE_LOADS            = ", ALTERNATIVE_LOADS)
 print("ALTERNATIVE_REGISTER_MAPPING = ", ALTERNATIVE_REGISTER_MAPPING)
 print("MOVPRFX                      = ", MOVPRFX)
 print("DISABLE_ASM_LOAD_STORE       = ", DISABLE_ASM_LOAD_STORE)
+print("PREFETCHING                  = ", PREFETCH)
 print("GRIDBENCH                    = ", GRIDBENCH)
 
 print("")
@@ -247,7 +250,8 @@ class Register:
             d['C'] += F'    {self.name} = {address};        \\\n'
         if (target in ['ALL', 'I']):
 #            d['I'] += F'    {self.name} = svldnt1(pg1, ({cast}*)({intrinfetchbase} + {index} * 64));  \\\n'
-            d['I'] += F'    {self.name} = svld1(pg1, ({cast}*)({intrinfetchbase} + {index} * 64));  \\\n'
+#            d['I'] += F'    {self.name} = svld1(pg1, ({cast}*)({intrinfetchbase} + {index} * 64));  \\\n'
+             d['I'] += F'    {self.name} = svld1_vnum(pg1, ({cast}*)({intrinfetchbase}), (int64_t)({index}));  \\\n'
         if (target in ['ALL', 'A']):
             if asm_opcode == 'ldr':
                 d['A'] += F'    "{asm_opcode} {self.asmreg}, [%[fetchptr], {index}, mul vl] \\n\\t" \\\n'
@@ -273,7 +277,8 @@ class Register:
 
         d['C'] += F'    {address} = {self.name};        \\\n'
         #d['I'] += F'    svstnt1(pg1, ({cast}*)({intrinstorebase} + {index} * 64), {self.name});  \\\n'
-        d['I'] += F'    svst1(pg1, ({cast}*)({intrinstorebase} + {index} * 64), {self.name});  \\\n'
+        #d['I'] += F'    svst1(pg1, ({cast}*)({intrinstorebase} + {index} * 64), {self.name});  \\\n'
+        d['I'] += F'    svst1_vnum(pg1, ({cast}*)({intrinstorebase}),(int64_t)({index}), {self.name});  \\\n'
         if asm_opcode == 'str':
             d['A'] += F'    "{asm_opcode} {self.asmreg}, [%[storeptr], {index}, mul vl] \\n\\t" \\\n'
         else:
@@ -968,12 +973,14 @@ if d['debug'] == True:
     write('    Simd debugreg; \\')
 # perm tables
 if PRECISION == 'double':
+    write('    uint64_t baseU; \\')
     write('    const uint64_t lut[4][8] = { \\')
     write('        {4, 5, 6, 7, 0, 1, 2, 3}, \\')  #0 = swap register halves
     write('        {2, 3, 0, 1, 6, 7, 4, 5}, \\')  #1 = swap halves of halves
     write('        {1, 0, 3, 2, 5, 4, 7, 6}, \\')  #2 = swap re/im
     write('        {0, 1, 2, 4, 5, 6, 7, 8} };\\')  #3 = identity
 else:
+    write('    uint64_t baseU; \\')
     write('    const uint32_t lut[4][16] = { \\')
     write('        {8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7}, \\')  #0 = swap register halves
     write('        {4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11}, \\')  #1 = swap halves of halves
@@ -1131,9 +1138,10 @@ write('// PREFETCH_GAUGE_L2 (prefetch to L2)')
 definemultiline(F'PREFETCH_GAUGE_L2_INTERNAL_{PRECSUFFIX}(A)')
 curlyopen()
 if GRIDBENCH:   # referencing differs in Grid and GridBench
-    write('    const auto & ref(U[sUn][A]); uint64_t baseU = (uint64_t)&ref + 3 * 3 * 64; \\')
+    #write('    const auto & ref(U[sUn][A]); baseU = (uint64_t)&ref + 3 * 3 * 64; \\')
+    write('    const auto & ref(U[sUn][0]); baseU = (uint64_t)&ref + A * 3 * 3 * 64; \\')
 else:
-    write('    const auto & ref(U[sUn](A)); uint64_t baseU = (uint64_t)&ref + 3 * 3 * 64; \\')
+    write('    const auto & ref(U[sUn](A)); baseU = (uint64_t)&ref + 3 * 3 * 64; \\')
 asmopen()
 #pg1.loadpredication()
 #fetch_base_ptr(F"&ref[{FETCH_BASE_PTR_COLOR_OFFSET}][0]")
@@ -1159,9 +1167,10 @@ write('// PREFETCH_GAUGE_L1 (prefetch to L1)')
 definemultiline(F'PREFETCH_GAUGE_L1_INTERNAL_{PRECSUFFIX}(A)')
 curlyopen()
 if GRIDBENCH:   # referencing differs in Grid and GridBench
-    write('    const auto & ref(U[sU][A]); uint64_t baseU = (uint64_t)&ref; \\')
+    #write('    const auto & ref(U[sU][A]); baseU = (uint64_t)&ref; \\')
+    write('    const auto & ref(U[sU][0]); baseU = (uint64_t)&ref + A * 3 * 3 * 64; \\')
 else:
-    write('    const auto & ref(U[sU](A)); uint64_t baseU = (uint64_t)&ref; \\')
+    write('    const auto & ref(U[sU](A)); baseU = (uint64_t)&ref; \\')
 asmopen()
 #pg1.loadpredication()
 #fetch_base_ptr(F"&ref[{FETCH_BASE_PTR_COLOR_OFFSET}][0]")
@@ -1213,33 +1222,33 @@ if ASM_LOAD_CHIMU:
     #fetch_base_ptr(F"&ref[{FETCH_BASE_PTR_COLOR_OFFSET}][0]")
     fetch_base_ptr(F"base + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='I')
     fetch_base_ptr(F"base + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='A')
-    Chimu_00.load("ref[0][0]")  # consecutive version
-    Chimu_01.load("ref[0][1]")
-    Chimu_02.load("ref[0][2]")
-    Chimu_10.load("ref[1][0]")
-    Chimu_11.load("ref[1][1]")
-    Chimu_12.load("ref[1][2]")
-    Chimu_20.load("ref[2][0]")
-    Chimu_21.load("ref[2][1]")
-    Chimu_22.load("ref[2][2]")
-    Chimu_30.load("ref[3][0]")
-    Chimu_31.load("ref[3][1]")
-    Chimu_32.load("ref[3][2]")
-
-    #Chimu_00.load("ref[0][0]")  # interleaved version, minimum penalty for all directions
-    #Chimu_30.load("ref[3][0]")
-    #Chimu_10.load("ref[1][0]")
-    #Chimu_20.load("ref[2][0]")
-
+    #Chimu_00.load("ref[0][0]")  # consecutive version
     #Chimu_01.load("ref[0][1]")
-    #Chimu_31.load("ref[3][1]")
-    #Chimu_11.load("ref[1][1]")
-    #Chimu_21.load("ref[2][1]")
-
     #Chimu_02.load("ref[0][2]")
-    #Chimu_32.load("ref[3][2]")
+    #Chimu_10.load("ref[1][0]")
+    #Chimu_11.load("ref[1][1]")
     #Chimu_12.load("ref[1][2]")
+    #Chimu_20.load("ref[2][0]")
+    #Chimu_21.load("ref[2][1]")
     #Chimu_22.load("ref[2][2]")
+    #Chimu_30.load("ref[3][0]")
+    #Chimu_31.load("ref[3][1]")
+    #Chimu_32.load("ref[3][2]")
+
+    Chimu_00.load("ref[0][0]")  # interleaved version, minimum penalty for all directions
+    Chimu_30.load("ref[3][0]")
+    Chimu_10.load("ref[1][0]")
+    Chimu_20.load("ref[2][0]")
+
+    Chimu_01.load("ref[0][1]")
+    Chimu_31.load("ref[3][1]")
+    Chimu_11.load("ref[1][1]")
+    Chimu_21.load("ref[2][1]")
+
+    Chimu_02.load("ref[0][2]")
+    Chimu_32.load("ref[3][2]")
+    Chimu_12.load("ref[1][2]")
+    Chimu_22.load("ref[2][2]")
     asmclose()
     debugall('LOAD_CHIMU', group='Chimu')
     curlyclose()
@@ -1370,9 +1379,10 @@ write('// LOAD_GAUGE')
 definemultiline(F'LOAD_GAUGE(A)')
 curlyopen()
 if GRIDBENCH:   # referencing differs in Grid and GridBench
-    write('    const auto & ref(U[sU][A]); uint64_t baseU = (uint64_t)&ref; \\')
+    #write('    const auto & ref(U[sU][A]); baseU = (uint64_t)&ref; \\')
+    write('    const auto & ref(U[sU][0]); baseU = (uint64_t)&ref + A * 3 * 3 * 64; \\')
 else:
-    write('    const auto & ref(U[sU](A)); uint64_t baseU = (uint64_t)&ref; \\')
+    write('    const auto & ref(U[sU](A)); baseU = (uint64_t)&ref; \\')
 asmopen()
 #pg1.loadpredication()
 fetch_base_ptr(F"baseU + {FETCH_BASE_PTR_COLOR_OFFSET} * 3 * 64", target='I')
@@ -1400,9 +1410,10 @@ definemultiline(F'MULT_2SPIN_1_{PRECSUFFIX}(A)')
 curlyopen()
 #write('    const auto & ref(U[sU][A]); \\')
 if GRIDBENCH:   # referencing differs in Grid and GridBench
-    write('    const auto & ref(U[sU][A]); uint64_t baseU = (uint64_t)&ref; \\')
+    #write('    const auto & ref(U[sU][A]); baseU = (uint64_t)&ref; \\')
+    write('    const auto & ref(U[sU][0]); baseU = (uint64_t)&ref + A * 3 * 3 * 64; \\')
 else:
-    write('    const auto & ref(U[sU](A)); uint64_t baseU = (uint64_t)&ref; \\')
+    write('    const auto & ref(U[sU](A)); baseU = (uint64_t)&ref; \\')
 asmopen()
 #pg1.loadpredication()
 #fetch_base_ptr("&ref[0][0]")

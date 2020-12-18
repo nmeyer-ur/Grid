@@ -99,17 +99,13 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
       } else {								                \
 	LOAD_CHI(base);							                \
       }									                    \
-      base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
-    MULT_2SPIN_1(Dir);					                    \
-    PREFETCH_CHIMU(base);                                   \
+     base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
+     PREFETCH_CHIMU_L1(base);                                   \
+     MULT_2SPIN_1(Dir);					                    \
     PREFETCH_CHIMU_L2(basep);                               \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
-    if (s == 0) {                                           \
-      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-    }        \
     MULT_2SPIN_2;					                        \
     RECON;								                    \
-
 /*
 NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
     though I expected that it would improve on performance
@@ -146,9 +142,6 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
   MULT_2SPIN_2;					                        \
 	RECON;								\
       }									\
-  if (s == 0) {                                           \
-     if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
-  }                                                       \
   base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
   PREFETCH_CHIMU(base);						\
   PREFETCH_CHIMU_L2(basep);                               \
@@ -296,6 +289,11 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       std::cout << "----------------------------------------------------" << std::endl;
 #endif
 
+      // DC ZVA test
+//      { uint64_t basestore = (uint64_t)&out[ss];
+//        PREFETCH_RESULT_L2_STORE(basestore); }
+
+
       ASM_LEG(Ym,Zm,PERMUTE_DIR2,DIR5_PROJ,DIR5_RECON);
 
 #ifdef SHOW
@@ -309,6 +307,11 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       std::cout << "----------------------------------------------------" << std::endl;
 #endif
 
+      // DC ZVA test
+//      { uint64_t basestore = (uint64_t)&out[ss];
+//        PREFETCH_RESULT_L2_STORE(basestore); }
+
+
       ASM_LEG(Zm,Tm,PERMUTE_DIR1,DIR6_PROJ,DIR6_RECON);
 
 #ifdef SHOW
@@ -321,6 +324,11 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       //printf("U                 = %llu\n", (uint64_t)&[sU](Dir));
       std::cout << "----------------------------------------------------" << std::endl;
 #endif
+
+      // DC ZVA test
+      { uint64_t basestore = (uint64_t)&out[ss];
+        PREFETCH_RESULT_L2_STORE(basestore);
+      }
 
       ASM_LEG(Tm,Xp,PERMUTE_DIR0,DIR7_PROJ,DIR7_RECON);
 
@@ -342,6 +350,7 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       base = (uint64_t) &out[ss];
       basep= st.GetPFInfo(nent,plocal); ent++;
       basep = (uint64_t) &out[ssn];
+      PREFETCH_RESULT_L1_STORE(base);
       RESULT(base,basep);
 
 #ifdef SHOW
