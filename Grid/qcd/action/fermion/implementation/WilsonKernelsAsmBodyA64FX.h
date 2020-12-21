@@ -105,9 +105,9 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
 	  LOAD_CHI(base);							                \
       }									                    \
       base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
-    MULT_2SPIN_1(Dir);					                    \
     PREFETCH_CHIMU(base);                                   \
     PREFETCH_CHIMU_L2(basep);                               \
+    MULT_2SPIN_1(Dir);					                    \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
     if (s == 0) {                                           \
