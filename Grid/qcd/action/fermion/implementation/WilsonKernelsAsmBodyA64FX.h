@@ -95,7 +95,10 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
 #ifdef INTERIOR_AND_EXTERIOR
 
 #define ASM_LEG(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)			\
-      basep = st.GetPFInfo(nent,plocal); nent++;			\
+    base_spinor_pf_L1 = st.GetPFInfo(spinor_pf_L1 + pf_off_L1, plocal); pf_off_L1++;  \
+    /* if (pf_off_L1 == 7) pf_off_L1+=2; else  pf_off_L1++; */     \
+    base_spinor_pf_L2 = st.GetPFInfo(spinor_pf_L2 + pf_off_L2, plocal); pf_off_L2++; \
+    /* if (pf_off_L2 == 7) pf_off_L2+=2; else  pf_off_L2++; */     \
       if ( local ) {							            \
     LOAD_CHIMU(base);                                       \
     LOAD_TABLE(PERMUTE_DIR);                                \
@@ -105,20 +108,14 @@ Author:  Nils Meyer  <nils.meyer@ur.de>  Regensburg University
 	  LOAD_CHI(base);							                \
       }									                    \
       base = st.GetInfo(ptype,local,perm,NxtDir,ent,plocal); ent++;	\
-    PREFETCH_CHIMU(base);                                   \
-    PREFETCH_CHIMU_L2(basep);                               \
+    PREFETCH_CHIMU(base_spinor_pf_L1);                                   \
+    PREFETCH_CHIMU_L2(base_spinor_pf_L2);                               \
     MULT_2SPIN_1(Dir);					                    \
-    /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
     if (s == 0) {                                           \
-      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } \
+      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir + gauge_pf_offset_L2); } \
     }                                                       \
     RECON;								                    \
-
-/*
-NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
-    though I expected that it would improve on performance
-*/
 
 #define ASM_LEG_XP(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)	    \
   base = st.GetInfo(ptype,local,perm,Dir,ent,plocal); ent++; \
@@ -206,12 +203,12 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
 #ifndef EXTERIOR
     //    int sU =lo.Reorder(ssU);
     int sU =ssU;
-    int ssn=ssU+1;     if(ssn>=nmax) ssn=0;
+    int ssn=ssU+1;     if(ssn>=nmax) ssn=1;
     //    int sUn=lo.Reorder(ssn);
     int sUn=ssn;
 #else
     int sU =ssU;
-    int ssn=ssU+1;     if(ssn>=nmax) ssn=0;
+    int ssn=ssU+1;     if(ssn>=nmax) ssn=1;
     int sUn=ssn;
 #endif
     for(int s=0;s<Ls;s++) {
@@ -219,6 +216,17 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       ssn=sUn*Ls+s;
       int  ent=ss*8;// 2*Ndim
       int nent=ssn*8;
+
+      // PF
+      int spinor_pf_offset_L1 = 1;
+      int spinor_pf_offset_L2 = 0;
+      int gauge_pf_offset_L2  = 0;
+      int spinor_pf_L1 = ss *8;
+      int spinor_pf_L2 = ssn*8;
+      int pf_off_L1 = spinor_pf_offset_L1;
+      int pf_off_L2 = spinor_pf_offset_L2;
+      uint64_t base_spinor_pf_L1;
+      uint64_t base_spinor_pf_L2;
 
       uint64_t delta_base, delta_base_p;
 
@@ -294,11 +302,6 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       std::cout << "----------------------------------------------------" << std::endl;
 #endif
 
-      // DC ZVA test
-      // { uint64_t basestore = (uint64_t)&out[ss];
-      //   PREFETCH_RESULT_L2_STORE(basestore); }
-
-
       ASM_LEG(Ym,Zm,PERMUTE_DIR2,DIR5_PROJ,DIR5_RECON);
 
 #ifdef SHOW
@@ -312,11 +315,6 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       std::cout << "----------------------------------------------------" << std::endl;
 #endif
 
-      // DC ZVA test
-      //{ uint64_t basestore = (uint64_t)&out[ss];
-      //  PREFETCH_RESULT_L2_STORE(basestore); }
-
-
       ASM_LEG(Zm,Tm,PERMUTE_DIR1,DIR6_PROJ,DIR6_RECON);
 
 #ifdef SHOW
@@ -329,11 +327,6 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
       //printf("U                 = %llu\n", (uint64_t)&[sU](Dir));
       std::cout << "----------------------------------------------------" << std::endl;
 #endif
-
-      // DC ZVA test
-      //{ uint64_t basestore = (uint64_t)&out[ss];
-      //  PREFETCH_RESULT_L2_STORE(basestore); }
-
 
       ASM_LEG(Tm,Xp,PERMUTE_DIR0,DIR7_PROJ,DIR7_RECON);
 
@@ -350,12 +343,10 @@ NB: picking PREFETCH_GAUGE_L2(Dir+4); here results in performance penalty
 
 #ifdef EXTERIOR
       if (nmu==0) break;
-      //      if (nmu!=0) std::cout << "EXT "<<sU<<std::endl;
+
 #endif
-      base = (uint64_t) &out[ss];
-      basep= st.GetPFInfo(nent,plocal); ent++;
+      base  = (uint64_t) &out[ss];
       basep = (uint64_t) &out[ssn];
-      //PREFETCH_RESULT_L1_STORE(base);
       RESULT(base,basep);
 
 #ifdef SHOW
